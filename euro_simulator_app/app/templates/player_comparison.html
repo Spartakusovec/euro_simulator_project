@@ -1,0 +1,362 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Porovnání hráčů - Euro Simulátor</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #007bff; --primary-hover: #0056b3;
+            --secondary-color: #6c757d; --secondary-hover: #5a6268;
+            --light-bg: #f8f9fa; --border-color: #dee2e6; --text-color: #343a40;
+            --text-muted: #6c757d; --card-bg: #ffffff; --header-bg: #e9ecef;
+            --stat-better: #28a745; --stat-worse: #dc3545;
+        }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0; padding: 20px; line-height: 1.6; background-color: #e9ecef;
+            color: var(--text-color); position: relative; padding-top: 70px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+        h1 { color: var(--text-color); text-align: center; margin-bottom: 1.5em; font-weight: 600; }
+        h2 { color: var(--text-color); text-align: center; margin-bottom: 1em; font-weight: 500; }
+        h2.comparison-title, h2.radar-title {
+             margin-top: 40px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color);
+             padding-bottom: 10px;
+         }
+        h3 { margin-top: 1.5em; margin-bottom: 0.8em; color: var(--primary-color); font-size: 1.1em; font-weight: 600; }
+
+        /* --- Form Layout Using CSS Grid (4 Columns) --- */
+        form {
+            background-color: var(--card-bg); padding: 25px; border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05); margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 equal columns */
+            gap: 20px;
+            align-items: start; /* Align items to top */
+        }
+        .filter-container { /* No flex needed */ }
+        form .player-select-div { /* No flex needed */ }
+        .submit-container {
+            grid-column: 1 / -1; /* Span all 4 columns */
+            text-align: center; margin-top: 15px; padding-top: 15px;
+        }
+        /* --- End Grid Layout Changes --- */
+
+        label { display: block; margin-bottom: 6px; font-weight: 500; color: var(--text-muted); font-size: 0.95em; }
+        select, button, a.button-link {
+            width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 6px;
+            box-sizing: border-box; background-color: var(--card-bg); height: 42px; vertical-align: middle;
+            font-size: 1em; text-align: center; line-height: 1.4; color: var(--text-color);
+        }
+        select {
+             appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236c757d%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.6-3.6%205.4-7.8%205.4-12.8%200-5-1.8-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
+             background-repeat: no-repeat; background-position: right 10px center; background-size: 8px 10px; padding-right: 30px; text-align: left;
+         }
+         /* Style for disabled select */
+         select:disabled {
+             background-color: #e9ecef; /* Lighter background */
+             cursor: not-allowed;
+             opacity: 0.7;
+         }
+        #player1, #player2 { border-radius: 6px; padding: 5px 12px; height: 42px; text-align: left; }
+        button.main-submit {
+            background-color: var(--primary-color); color: white; border: none; cursor: pointer; transition: background-color 0.2s ease;
+            max-width: 300px; display: inline-block; width: auto; padding: 5px 20px; border-radius: 6px; font-weight: 500;
+        }
+        button.main-submit:hover { background-color: var(--primary-hover); }
+        a.reset-button {
+            display: inline-block; padding: 5px 20px; background-color: var(--secondary-color); color: white; border: 1px solid var(--secondary-color);
+            border-radius: 6px; text-decoration: none; margin-left: 10px; vertical-align: middle; height: 42px; line-height: 30px;
+            box-sizing: border-box; transition: background-color 0.2s ease; width: auto; font-weight: 500;
+        }
+        a.reset-button:hover { background-color: var(--secondary-hover); color: white; }
+        a.back-button-tr {
+            position: fixed; top: 15px; right: 20px; padding: 6px 12px; background-color: var(--secondary-color); color: white;
+            border-radius: 6px; text-decoration: none; font-size: 0.9em; z-index: 10; transition: background-color 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        a.back-button-tr:hover { background-color: var(--secondary-hover); color: white; }
+        .checkbox-group {
+            border: none; padding: 5px 0; background-color: transparent; border-radius: 4px;
+            display: flex; flex-wrap: wrap; gap: 8px;
+        }
+        .checkbox-group input[type="checkbox"] { display: none; }
+        .checkbox-group label {
+            display: inline-block; padding: 6px 14px; border: 1px solid var(--border-color); border-radius: 18px; background-color: var(--card-bg);
+            color: var(--text-muted); cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+            font-weight: 500; margin: 0; line-height: 1.4; white-space: nowrap; font-size: 0.9em;
+        }
+        .checkbox-group input[type="checkbox"]:checked + label { background-color: var(--primary-color); color: white; border-color: var(--primary-hover); }
+        .checkbox-group input[type="checkbox"]:not(:checked) + label:hover { background-color: #e9ecef; border-color: #adb5bd; color: var(--text-color); }
+        .comparison-table {
+            border-collapse: collapse; width: 100%; max-width: 900px; margin: 20px auto 30px auto; background-color: var(--card-bg);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05); border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color);
+        }
+        .comparison-table th, .comparison-table td { border: none; border-bottom: 1px solid var(--border-color); padding: 12px 15px; text-align: center; vertical-align: middle; }
+        .comparison-table th { background-color: var(--light-bg); font-weight: 600; color: var(--text-color); border-bottom-width: 2px; }
+        .comparison-table td { font-size: 0.95em; }
+        .comparison-table tbody tr:last-child td { border-bottom: none; }
+        .comparison-table tbody tr:hover:not(.group-header) { background-color: #f1f1f1; }
+        .attribute-name { text-align: left; font-weight: 500; color: var(--text-muted); width: 35%; }
+        .stat-value { width: 25%; font-size: 1.05em; font-weight: 500;}
+        .stat-better { color: var(--stat-better); font-weight: 600; }
+        .stat-worse { color: var(--stat-worse); }
+        .margin { font-size: 0.85em; color: var(--text-muted); margin-left: 5px; font-weight: normal; }
+        .group-header td { background-color: var(--header-bg); font-weight: 600; text-align: left; padding: 10px 15px; color: var(--text-color); border-top: 2px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
+        .player-card {
+            background-color: var(--card-bg); padding: 25px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            margin-bottom: 20px; border: 1px solid var(--border-color);
+        }
+        .comparison-cards-container { display: flex; justify-content: space-around; margin-bottom: 20px; flex-wrap: wrap; gap: 20px; }
+        .comparison-cards-container .player-card { flex: 1; min-width: 300px; max-width: 400px; margin: 0; }
+        .player-card h2 { margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; font-size: 1.3em; font-weight: 600; }
+        .player-card h3 { margin-top: 20px; margin-bottom: 10px; color: var(--primary-color); font-size: 1.1em; font-weight: 600; }
+        .player-card p, .player-card li { margin-bottom: 8px; color: var(--text-muted); font-size: 0.95em;}
+        .player-card p > strong, .player-card li > strong { color: var(--text-color); font-weight: 500; min-width: 120px; display: inline-block; margin-right: 5px; }
+        .player-card ul { list-style: none; padding: 0; margin-top: 10px; }
+        .player-card li strong { min-width: 160px; }
+        a.back-link { display: block; text-align: center; margin-top: 30px; color: var(--primary-color); text-decoration: none; font-size: 1.1em; padding: 10px; }
+        a.back-link:hover { text-decoration: underline; }
+        hr { border: none; border-top: 1px solid #eee; margin: 20px 0; width: 100%; }
+        #radarChartContainer {
+            background-color: var(--card-bg); padding: 20px; border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05); margin: 30px auto;
+            max-width: 700px; border: 1px solid var(--border-color);
+        }
+        #radarChart { width: 100%; min-height: 450px; }
+
+        @media (max-width: 1100px) { /* Adjust grid for medium screens */
+             form { grid-template-columns: repeat(2, 1fr); }
+             .submit-container { grid-column: 1 / -1; }
+        }
+        @media (max-width: 768px) {
+            body { padding-top: 60px; }
+            form { grid-template-columns: 1fr; } /* Stack form elements */
+             .filter-container, form .player-select-div { min-width: 100%; }
+            .submit-container { grid-column: auto; } /* Reset span */
+            button.main-submit, a.reset-button { max-width: none; display: block; width: 100%; margin-bottom: 10px; margin-left: 0; }
+            a.back-button-tr { top: 10px; right: 10px; padding: 5px 10px; }
+            .comparison-table th, .comparison-table td { padding: 8px 6px; font-size: 0.9em; }
+            .attribute-name { width: auto; }
+            .stat-value { width: auto; }
+            .comparison-cards-container { flex-direction: column; gap: 15px; }
+            .comparison-cards-container .player-card { max-width: none; }
+            #radarChartContainer { max-width: 95%; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="{{ url_for('index') }}" class="back-button-tr">Zpět na hlavní stránku</a>
+
+    <h1>Porovnání Hráčů</h1>
+
+    <form method="get" action="{{ url_for('player_comparison') }}">
+        <div class="filter-container">
+            <label>Filtrovat podle národnosti:</label>
+            <div class="checkbox-group">
+                {% for nat in all_nationalities %}
+                <input type="checkbox" name="nationality_filter" value="{{ nat }}" id="nat-{{ nat }}" {% if nat in selected_nationalities %}checked{% endif %}>
+                <label for="nat-{{ nat }}">{{ nat }}</label>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="filter-container">
+            <label>Filtrovat podle pozice:</label>
+            <div class="checkbox-group">
+                {% for pos in all_positions %}
+                 <input type="checkbox" name="position_filter" value="{{ pos }}" id="pos-{{ pos }}" {% if pos in selected_positions %}checked{% endif %}>
+                 <label for="pos-{{ pos }}">{{ pos }}</label>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="player-select-div">
+            <label for="player1">Hráč 1:</label>
+            <select name="player1" id="player1"> {# ID is important for JS #}
+                <option value="">-- Vyberte hráče 1 --</option>
+                {% for player in all_players %}
+                    <option value="{{ player.player_name }}" {% if player1_name == player.player_name %}selected{% endif %}>
+                        {{ player.player_name }} ({{ player.nationality }})
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="player-select-div">
+            <label for="player2">Hráč 2 (nepovinné):</label>
+            <select name="player2" id="player2"> {# ID is important for JS #}
+                <option value="">-- Vyberte hráče 2 --</option>
+                {% for player in all_players %}
+                    <option value="{{ player.player_name }}" {% if player2_name == player.player_name %}selected{% endif %}>
+                         {{ player.player_name }} ({{ player.nationality }})
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="submit-container">
+            <button type="submit" class="main-submit">Filtrovat / Zobrazit / Porovnat</button>
+            <a href="{{ url_for('player_comparison') }}" class="reset-button button-link">Resetovat Filtry</a>
+        </div>
+    </form>
+
+    {# --- Display Area --- #}
+    {# Display for Single Player #}
+    {% if player1_data and not player2_data %}
+        {# Add Export Button for Single Player #}
+        <div style="text-align: right; margin-bottom: 15px;">
+            <a href="{{ url_for('player_comparison_export', player1=player1_name) }}" class="button-link reset-button" style="text-decoration: none;">
+                Exportovat data hráče {{ player1_name }}
+            </a>
+        </div>
+        <div class="player-card" style="max-width: 500px; margin: 30px auto;">
+            <h2>Statistiky: {{ player1_data.player_name }}</h2>
+            <p><strong>Tým:</strong> {{ player1_data.team_name }}</p>
+            <p><strong>Národnost:</strong> {{ player1_data.nationality }}</p>
+            <p><strong>Celkové hodnocení:</strong> {{ player1_data.overall_rating }}</p>
+            <p><strong>Primární pozice:</strong> {{ player1_data.primary_position }}</p>
+            <p><strong>Věk:</strong> {{ player1_data.age }}</p>
+            <p><strong>Výška:</strong> {{ player1_data.height }} cm</p>
+            <p><strong>Váha:</strong> {{ player1_data.weight }} kg</p>
+            <p><strong>Noha:</strong> {{ player1_data.foot }}</p>
+            <p><strong>Slabší noha (Použití):</strong> {{ player1_data.weak_foot_usage }}</p>
+            <p><strong>Slabší noha (Přesnost):</strong> {{ player1_data.weak_foot_accuracy }}</p>
+            <p><strong>Forma:</strong> {{ player1_data.form }}</p>
+            <p><strong>Odolnost (Zranění):</strong> {{ player1_data.injury_resistance }}</p>
+            <h3>Atributy:</h3>
+            <ul>
+                {% for attr, value in player1_data.items() %}
+                    {% if attr not in ['player_name', 'team_name', 'nationality', 'height', 'weight', 'age', 'foot', 'rating', 'primary_position', 'secondary_positions', 'backup_positions', 'overall_rating', 'league', 'region', 'weak_foot_usage', 'weak_foot_accuracy', 'form', 'injury_resistance'] %}
+                        <li><strong>{{ attr.replace('_', ' ').title() }}:</strong> {{ value }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    {# Display for Comparison of Two Players #}
+    {% if comparison_data_grouped and player1_data and player2_data %}
+         {# Add Export Button for Comparison #}
+        <div style="text-align: right; margin-bottom: 15px; margin-top: 20px;">
+             <a href="{{ url_for('player_comparison_export', player1=player1_name, player2=player2_name) }}" class="button-link reset-button" style="text-decoration: none;">
+                Exportovat porovnání
+            </a>
+        </div>
+        <div class="comparison-cards-container">
+             <div class="player-card">
+                 <h2>{{ player1_data.player_name }}</h2>
+                 <p><strong>Národnost:</strong> {{ player1_data.nationality }}</p>
+                 <p><strong>Tým:</strong> {{ player1_data.team_name }}</p>
+                 <p><strong>Pozice:</strong> {{ player1_data.primary_position }}</p>
+                 <p><strong>Věk:</strong> {{ player1_data.age }}</p>
+                 <p><strong>Výška:</strong> {{ player1_data.height }} cm</p>
+                 <p><strong>Váha:</strong> {{ player1_data.weight }} kg</p>
+                 <p><strong>Noha:</strong> {{ player1_data.foot }}</p>
+                 <p><strong>Slabší noha (Použití):</strong> {{ player1_data.weak_foot_usage }}</p>
+                 <p><strong>Slabší noha (Přesnost):</strong> {{ player1_data.weak_foot_accuracy }}</p>
+                 <p><strong>Forma:</strong> {{ player1_data.form }}</p>
+                 <p><strong>Odolnost (Zranění):</strong> {{ player1_data.injury_resistance }}</p>
+             </div>
+             <div class="player-card">
+                 <h2>{{ player2_data.player_name }}</h2>
+                 <p><strong>Národnost:</strong> {{ player2_data.nationality }}</p>
+                 <p><strong>Tým:</strong> {{ player2_data.team_name }}</p>
+                 <p><strong>Pozice:</strong> {{ player2_data.primary_position }}</p>
+                 <p><strong>Věk:</strong> {{ player2_data.age }}</p>
+                 <p><strong>Výška:</strong> {{ player2_data.height }} cm</p>
+                 <p><strong>Váha:</strong> {{ player2_data.weight }} kg</p>
+                 <p><strong>Noha:</strong> {{ player2_data.foot }}</p>
+                 <p><strong>Slabší noha (Použití):</strong> {{ player2_data.weak_foot_usage }}</p>
+                 <p><strong>Slabší noha (Přesnost):</strong> {{ player2_data.weak_foot_accuracy }}</p>
+                 <p><strong>Forma:</strong> {{ player2_data.form }}</p>
+                 <p><strong>Odolnost (Zranění):</strong> {{ player2_data.injury_resistance }}</p>
+             </div>
+         </div>
+        <div id="radarChartContainer">
+             <h2 class="radar-title">Vizuální porovnání kategorií</h2>
+             <div id="radarChart"></div>
+        </div>
+        <h2 class="comparison-title">Porovnání Atributů</h2>
+        <table class="comparison-table">
+            <thead> <tr> <th>Atribut</th> <th>{{ player1_data.player_name }}</th> <th>{{ player2_data.player_name }}</th> </tr> </thead>
+            <tbody>
+            {% for group in comparison_data_grouped %}
+                <tr class="group-header"> <td colspan="3">{{ group.group_name }}</td> </tr>
+                {% for attr_data in group.attributes %}
+                <tr>
+                    <td class="attribute-name">{{ attr_data.name }}</td>
+                    <td class="stat-value {{ 'stat-better' if attr_data.p1_better else 'stat-worse' if attr_data.p2_better else '' }}"> {{ attr_data.p1_value }} {% if attr_data.p1_better and attr_data.diff != 0 %}<span class="margin">(+{{ attr_data.diff }})</span>{% endif %} </td>
+                    <td class="stat-value {{ 'stat-better' if attr_data.p2_better else 'stat-worse' if attr_data.p1_better else '' }}"> {{ attr_data.p2_value }} {% if attr_data.p2_better and attr_data.diff != 0 %}<span class="margin">(+{{ attr_data.diff }})</span>{% endif %} </td>
+                </tr>
+                {% endfor %}
+            {% endfor %}
+            </tbody>
+        </table>
+    {% elif player1_name and player2_name and not comparison_data_grouped %}
+        <p>Nepodařilo se načíst data pro porovnání vybraných hráčů.</p>
+    {% endif %}
+
+    <a href="{{ url_for('index') }}" class="back-link">Zpět na hlavní stránku</a>
+</div>
+
+{# *** JAVASCRIPT FOR DYNAMIC DISABLE/ENABLE AND CHART *** #}
+<script>
+    // Wait for the HTML document to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get references to the select elements
+        const player1Select = document.getElementById('player1');
+        const player2Select = document.getElementById('player2');
+
+        // Function to update the enabled/disabled state of Player 2 select
+        function updatePlayer2State() {
+            // Check if Player 1 has a value selected (i.e., not the default empty option)
+            if (player1Select.value === '') {
+                // Player 1 is not selected: Disable Player 2 and reset its value
+                player2Select.disabled = true;
+                player2Select.value = ''; // Reset to default "-- Vyberte hráče 2 --"
+            } else {
+                // Player 1 is selected: Enable Player 2
+                player2Select.disabled = false;
+            }
+        }
+
+        // --- Initial State ---
+        // Set the initial disabled state of Player 2 when the page loads
+        updatePlayer2State();
+
+        // --- Event Listener ---
+        // Add an event listener to Player 1 select element
+        // When the selection changes, call the updatePlayer2State function
+        if (player1Select) { // Ensure player1Select exists before adding listener
+             player1Select.addEventListener('change', updatePlayer2State);
+        } else {
+            console.error("Player 1 select element (#player1) not found.");
+        }
+
+    }); // End DOMContentLoaded listener
+
+    // Plotly chart rendering function (unchanged)
+    function renderPlotlyChart(divId, jsonData, errorMsg) {
+        var graphDiv = document.getElementById(divId);
+        if (!graphDiv) { console.error("Chart div not found:", divId); return; }
+        // Updated check for valid data structure
+        if (jsonData && typeof jsonData === 'object' && Object.keys(jsonData).length > 0) {
+             if (jsonData.data && Array.isArray(jsonData.data) && jsonData.data.length > 0 && jsonData.layout) { // Check if data array is not empty
+                 try { Plotly.newPlot(graphDiv, jsonData.data, jsonData.layout, {responsive: true}); console.log("Chart rendered:", divId); }
+                 catch(e) { console.error("Plotly Error for", divId, ":", e); graphDiv.innerHTML = "<p>" + errorMsg + " (Chyba vykreslení: " + e.message + ")</p>"; }
+             } else {
+                 console.log("Invalid or empty Plotly JSON structure for chart:", divId, jsonData);
+                 // Display error only if comparison was attempted
+                 var player1Selected = document.getElementById('player1') && document.getElementById('player1').value;
+                 var player2Selected = document.getElementById('player2') && document.getElementById('player2').value;
+                 if (player1Selected && player2Selected) { graphDiv.innerHTML = "<p>" + errorMsg + " (Neplatná nebo prázdná data pro graf).</p>"; }
+                 else { graphDiv.innerHTML = ""; /* Hide if no comparison attempted */ }
+             }
+        } else {
+            // Hide chart area if no data is passed at all (e.g., initial load, single player view)
+             graphDiv.innerHTML = "";
+        }
+    }
+    renderPlotlyChart('radarChart', {{ radar_chart_json | safe or '{}' }}, 'Radarový graf nelze zobrazit.');
+</script>
+
+</body>
+</html>

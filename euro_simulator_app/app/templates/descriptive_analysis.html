@@ -1,0 +1,317 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>
+        {# *** ADJUSTED TITLE LOGIC TO REFLECT VIEW MODE *** #}
+        {% if view_mode == 'single_team' %}
+            Detailní Analýza: {{ selected_team1 }}
+        {% elif view_mode == 'two_team_comparison' %}
+            Porovnání týmů: {{ selected_team1 }} vs {{ selected_team2 }}
+        {% else %}
+            {{ title }} {# Default/Overview title from routes.py #}
+        {% endif %}
+        - Euro Simulátor
+    </title>
+    <style>
+        /* --- ALL STYLES FROM PREVIOUS RESPONSE REMAIN THE SAME --- */
+        :root { --primary-color: #007bff; --primary-hover: #0056b3; --secondary-color: #6c757d; --secondary-hover: #5a6268; --light-bg: #f8f9fa; --border-color: #dee2e6; --text-color: #343a40; --text-muted: #6c757d; --card-bg: #ffffff; --header-bg: #e9ecef; --stat-better: #28a745; --stat-worse: #dc3545; --stat-max: #17a2b8; --stat-min: #ffc107; }
+        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; margin: 0; padding: 20px; line-height: 1.6; background-color: #f4f4f4; color: var(--text-color); position: relative; padding-top: 70px; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 25px; background-color: var(--card-bg); border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        h1 { color: #333; text-align: center; margin-bottom: 1.5em; font-weight: 600; }
+        h2 { color: #333; text-align: center; margin-top: 1.5em; margin-bottom: 1em; font-weight: 500; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;}
+        h3.comparison-subtitle, h3.single-team-subtitle { text-align: center; margin-top: 1.5em; margin-bottom: 1em; font-weight: 500; color: var(--text-muted); }
+        h3.attribute-select-title { text-align: left; margin-top: 1.5em; margin-bottom: 1em; font-weight: 500; color: var(--text-muted); font-size: 1.1em; }
+        /* Main Descriptive Table */
+        #statsTable { border-collapse: collapse; width: 100%; margin: 20px auto 30px auto; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid var(--border-color); }
+        #statsTable th, #statsTable td { border: 1px solid var(--border-color); padding: 10px 12px; text-align: left; }
+        #statsTable th { background-color: var(--header-bg); font-weight: 600; text-align: center; }
+        #statsTable tbody tr:nth-child(odd) { background-color: var(--light-bg); }
+        #statsTable tbody tr:hover { background-color: #f1f1f1; }
+        #statsTable td.number { text-align: right; }
+        #statsTable th.sortable { cursor: pointer; position: relative; }
+        #statsTable th.sortable:hover { background-color: #dde2e6; }
+        #statsTable th.sortable::after { content: ''; position: absolute; right: 8px; top: 50%; margin-top: -7px; border: 5px solid transparent; opacity: 0.3; }
+        #statsTable th.sortable.sort-asc::after { border-bottom-color: #333; opacity: 1; }
+        #statsTable th.sortable.sort-desc::after { border-top-color: #333; opacity: 1; }
+        /* Button Styles for Scope Toggle */
+        .button-group { text-align: center; margin-bottom: 25px; margin-top: 10px; }
+        .toggle-button { display: inline-block; padding: 8px 16px; margin: 0 5px; border: 1px solid var(--primary-color); background-color: #fff; color: var(--primary-color); border-radius: 6px; text-decoration: none; font-size: 0.95em; cursor: pointer; transition: all 0.2s ease; font-weight: 500; }
+        .toggle-button:hover { background-color: #e2e8f0; }
+        .toggle-button.active { background-color: var(--primary-color); color: white; border-color: var(--primary-hover); }
+        /* Team Comparison/Analysis Form */
+        #comparisonForm { margin-top: 0; padding: 20px; background-color: var(--light-bg); border-radius: 8px; border: 1px solid var(--border-color); display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end; margin-bottom: 30px; }
+        #comparisonForm > div:not(.button-container) { flex: 1 1 180px; min-width: 160px; }
+        #comparisonForm label { display: block; margin-bottom: 6px; font-weight: 500; color: var(--text-muted); font-size: 0.9em; }
+        #comparisonForm select { width: 100%; padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; height: 38px; font-size: 0.95em; }
+        #comparisonForm .button-container { flex-basis: 100%; display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
+        .comparison-form-button { display: inline-flex; align-items: center; justify-content: center; padding: 8px 20px; border: 1px solid transparent; border-radius: 4px; cursor: pointer; height: 38px; font-size: 0.95em; font-weight: 500; transition: background-color 0.2s ease, border-color 0.2s ease; flex-grow: 0; text-decoration: none; box-sizing: border-box; width: auto; line-height: 1; white-space: nowrap; }
+        .comparison-form-button.primary { background-color: var(--primary-color); border-color: var(--primary-color); color: white; }
+        .comparison-form-button.primary:hover { background-color: var(--primary-hover); border-color: var(--primary-hover); }
+        .comparison-form-button.secondary { background-color: var(--secondary-color); border-color: var(--secondary-color); color: white; }
+        .comparison-form-button.secondary:hover { background-color: var(--secondary-hover); border-color: var(--secondary-hover); }
+        /* Team Comparison Table */
+        #teamComparisonTable { border-collapse: collapse; width: 100%; margin: 20px auto 30px auto; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid var(--border-color); }
+        #teamComparisonTable th, #teamComparisonTable td { border: 1px solid var(--border-color); padding: 10px 12px; text-align: center; vertical-align: middle; }
+        #teamComparisonTable th { background-color: var(--header-bg); font-weight: 600; }
+        #teamComparisonTable tbody tr:nth-child(odd) { background-color: var(--light-bg); }
+        #teamComparisonTable tbody tr:hover { background-color: #f1f1f1; }
+        #teamComparisonTable .attribute-name { text-align: left; font-weight: 500; color: var(--text-muted); width: 40%; }
+        #teamComparisonTable .stat-value { width: 25%; font-weight: 500; }
+        #teamComparisonTable .stat-better { color: var(--stat-better); font-weight: bold; }
+        #teamComparisonTable .stat-worse { color: var(--stat-worse); }
+        #teamComparisonTable .margin { font-size: 0.85em; color: var(--text-muted); margin-left: 5px; font-weight: normal; }
+        /* Single Team Analysis Table */
+        #singleTeamAnalysisTable { border-collapse: collapse; width: 100%; margin: 20px auto 30px auto; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid var(--border-color); }
+        #singleTeamAnalysisTable th, #singleTeamAnalysisTable td { border: 1px solid var(--border-color); padding: 10px 12px; text-align: left; vertical-align: top; }
+        #singleTeamAnalysisTable th { background-color: var(--header-bg); font-weight: 600; }
+        #singleTeamAnalysisTable tbody tr:nth-child(odd) { background-color: var(--light-bg); }
+        #singleTeamAnalysisTable tbody tr:hover { background-color: #f1f1f1; }
+        #singleTeamAnalysisTable .attribute-name { font-weight: 500; color: var(--text-muted); width: 25%; }
+        #singleTeamAnalysisTable .max-value, #singleTeamAnalysisTable .min-value { width: 37.5%; }
+        #singleTeamAnalysisTable .max-value span, #singleTeamAnalysisTable .min-value span { font-weight: bold; display: block; margin-bottom: 5px; }
+        #singleTeamAnalysisTable .max-value span { color: var(--stat-max); }
+        #singleTeamAnalysisTable .min-value span { color: var(--stat-min); }
+        #singleTeamAnalysisTable ul.player-list { margin: 0; padding-left: 15px; font-size: 0.9em; list-style-type: none; }
+        #singleTeamAnalysisTable ul.player-list li { margin-bottom: 3px; }
+        #singleTeamAnalysisTable .no-data { color: var(--text-muted); font-style: italic; }
+        /* Attribute Selector Section (Checkboxes) */
+        #singleTeamAttributeSelector { background-color: var(--light-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); margin-top: 30px; margin-bottom: 20px; }
+        .attribute-options-container { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; }
+        .gk-option-container { flex-basis: 200px; flex-grow: 0; }
+        .gk-option-container > label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--text-muted); font-size: 0.9em; }
+        .radio-group { padding-top: 5px; }
+        .radio-group input[type="radio"] { margin-right: 5px; vertical-align: middle; cursor: pointer; }
+        .radio-group label.radio-label { display: inline-block; margin-right: 15px; margin-bottom: 5px; font-weight: normal; font-size: 0.95em; color: var(--text-color); vertical-align: middle; cursor: pointer; }
+        .checkbox-group-container { flex-grow: 1; }
+        .checkbox-group-container > label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--text-muted); font-size: 0.9em; }
+        .checkbox-group { border: none; padding: 5px 0; background-color: transparent; border-radius: 4px; display: flex; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 15px; }
+        .checkbox-group input[type="checkbox"] { display: none; }
+        .checkbox-group label { display: inline-block; padding: 6px 14px; border: 1px solid var(--border-color); border-radius: 18px; background-color: var(--card-bg); color: var(--text-muted); cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease; font-weight: 500; margin: 0; line-height: 1.4; white-space: nowrap; font-size: 0.9em; }
+        .checkbox-group input[type="checkbox"]:checked + label { background-color: var(--primary-color); color: white; border-color: var(--primary-hover); }
+        .checkbox-group input[type="checkbox"]:not(:checked) + label:hover { background-color: #e9ecef; border-color: #adb5bd; color: var(--text-color); }
+        #singleTeamAttributeSelector .button-container { text-align: center; margin-top: 10px; clear: both; }
+        /* Export Button Style */
+        .export-button-container { text-align: right; margin-top: -15px; margin-bottom: 20px; }
+        a.export-button { display: inline-block; padding: 6px 12px; background-color: var(--secondary-color); color: white; border-radius: 4px; text-decoration: none; font-size: 0.85em; transition: background-color 0.2s ease; }
+        a.export-button:hover { background-color: var(--secondary-hover); }
+        /* Utility & Links */
+        a.back-button-tr { position: fixed; top: 15px; right: 20px; padding: 6px 12px; background-color: var(--secondary-color); color: white; border-radius: 6px; text-decoration: none; font-size: 0.9em; z-index: 10; transition: background-color 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        a.back-button-tr:hover { background-color: var(--secondary-hover); color: white; }
+        a.back-link { display: block; text-align: center; margin-top: 30px; color: var(--primary-color); text-decoration: none; font-size: 1.1em; padding: 10px; }
+        a.back-link:hover { text-decoration: underline; }
+        hr { border: none; border-top: 1px solid #eee; margin: 40px 0; }
+        p.error-message { text-align: center; color: var(--stat-worse); margin-top: 20px; }
+        p.info-message { text-align: center; color: var(--text-muted); margin-top: 20px; }
+        /* Responsive Styles */
+         @media (max-width: 768px) {
+            body { padding-top: 60px; }
+            #comparisonForm { flex-direction: column; align-items: stretch; }
+            #comparisonForm .button-container { flex-basis: auto; }
+            .comparison-form-button { display: block; width: 100%; margin-bottom: 10px; }
+            .comparison-form-button.secondary { margin-top: 0; }
+            a.back-button-tr { top: 10px; right: 10px; padding: 5px 10px; }
+            #statsTable th, #statsTable td, #teamComparisonTable th, #teamComparisonTable td, #singleTeamAnalysisTable th, #singleTeamAnalysisTable td { padding: 8px 6px; font-size: 0.9em; }
+            #teamComparisonTable .attribute-name, #teamComparisonTable .stat-value { width: auto; }
+            #singleTeamAnalysisTable .attribute-name, #singleTeamAnalysisTable .max-value, #singleTeamAnalysisTable .min-value { width: auto; display: block; margin-bottom: 10px; }
+            #singleTeamAnalysisTable ul.player-list { margin-top: 5px; }
+            .attribute-options-container { flex-direction: column; gap: 15px; }
+            .gk-option-container { flex-basis: auto; width: 100%;}
+            .radio-group label.radio-label { margin-right: 10px; }
+            .export-button-container { text-align: center; margin-top: 10px;}
+        }
+    </style>
+</head>
+<body>
+    <a href="{{ url_for('index') }}" class="back-button-tr">Zpět na hlavní stránku</a>
+    <div class="container">
+        <h1>{{ title }}</h1>
+
+        {# --- Team Selection / Analysis Form --- #}
+        <h2>Vyberte tým(y)</h2>
+        <form id="comparisonForm" method="get" action="{{ url_for('descriptive_analysis') }}">
+             {# Pass overview scope only if in overview mode #}
+             {% if view_mode == 'overview' and current_scope %}
+             <input type="hidden" name="scope" value="{{ current_scope }}">
+             {% endif %}
+             <div> <label for="team1">Tým 1 (pro porovnání nebo analýzu):</label> <select name="team1" id="team1"> <option value="">-- Vyberte tým --</option> {% for team_name in all_teams %} <option value="{{ team_name }}" {% if team_name == selected_team1 %}selected{% endif %}>{{ team_name }}</option> {% endfor %} </select> </div>
+             <div> <label for="team2">Tým 2 (pouze pro porovnání):</label> <select name="team2" id="team2"> <option value="">-- Vyberte tým 2 (nepovinné) --</option> {% for team_name in all_teams %} <option value="{{ team_name }}" {% if team_name == selected_team2 %}selected{% endif %}>{{ team_name }}</option> {% endfor %} </select> </div>
+             <div> <label for="comparison_scope">Rozsah analýzy/porovnání:</label> <select name="comparison_scope" id="comparison_scope"> <option value="all" {% if comparison_scope == 'all' %}selected{% endif %}>Všichni hráči</option> <option value="squad" {% if comparison_scope == 'squad' %}selected{% endif %}>Soupiska (11)</option> </select> </div>
+             <div class="button-container"> <button type="submit" class="comparison-form-button primary">Analyzovat / Porovnat</button> <a href="{{ url_for('descriptive_analysis') }}" class="comparison-form-button secondary">Zobrazit přehled</a> </div>
+        </form>
+
+        {# --- Display Area based on View Mode (Corrected Conditional Logic) --- #}
+
+        {% if view_mode == 'single_team' %}
+            {# --- Single Team Analysis Section --- #}
+            {% if single_team_analysis_results is not none %}
+                 <div id="singleTeamAttributeSelector">
+                    <form method="get" action="{{ url_for('descriptive_analysis') }}">
+                        <input type="hidden" name="team1" value="{{ selected_team1 }}">
+                        <input type="hidden" name="comparison_scope" value="{{ comparison_scope }}">
+                        <div class="attribute-options-container">
+                            <div class="gk-option-container">
+                                <label>Zahrnutí brankářů:</label>
+                                <div class="radio-group">
+                                    <input type="radio" name="include_gk" value="yes" id="gk_yes" {% if selected_include_gk == 'yes' %}checked{% endif %}> <label for="gk_yes" class="radio-label">Zahrnout</label> <br>
+                                    <input type="radio" name="include_gk" value="no" id="gk_no" {% if selected_include_gk == 'no' %}checked{% endif %}> <label for="gk_no" class="radio-label">Vyloučit</label>
+                                </div>
+                            </div>
+                            <div class="checkbox-group-container">
+                                <label>Vyberte atributy pro detailní analýzu:</label>
+                                <div class="checkbox-group">
+                                    {% for attr in available_attributes %}
+                                        <input type="checkbox" name="attributes" value="{{ attr }}" id="attr-{{ attr }}" {% if attr in selected_attributes_for_single %}checked{% endif %}>
+                                        <label for="attr-{{ attr }}">{{ attr.replace('_', ' ').title() }}</label>
+                                    {% else %} <p>Nejsou dostupné žádné atributy k výběru.</p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="button-container"> <button type="submit" class="comparison-form-button primary">Aktualizovat Analýzu</button> </div>
+                    </form>
+                 </div>
+                 <h3 class="single-team-subtitle">Detailní analýza: {{ selected_team1 }} (Rozsah: {{ 'Soupiska' if comparison_scope == 'squad' else 'Všichni hráči' }}, Brankáři: {{ 'Zahrnuti' if selected_include_gk == 'yes' else 'Vyloučeni' }})</h3>
+                 <div class="export-button-container">
+                      <a href="{{ url_for('descriptive_analysis_export', team1=selected_team1, comparison_scope=comparison_scope, include_gk=selected_include_gk, attributes=selected_attributes_for_single|join(',')) }}" class="export-button">Exportovat do CSV</a>
+                 </div>
+                 {% if single_team_analysis_results %}
+                 <table id="singleTeamAnalysisTable">
+                     <thead> <tr> <th>Atribut</th> <th>Nejvyšší Hodnota (Hráč/i)</th> <th>Nejnižší Hodnota (Hráč/i)</th> </tr> </thead>
+                     <tbody> {% for attr, data in single_team_analysis_results.items() %} <tr> <td class="attribute-name">{{ data.name }}</td> <td class="max-value"> {% if data.max_val is not none and data.max_val != 'N/A' %} <span>{{ data.max_val }}</span> {% if data.max_players %} <ul class="player-list"> {% for player in data.max_players %} <li>{{ player }}</li> {% endfor %} </ul> {% endif %} {% elif data.error %} <span class="no-data">{{ data.error }}</span> {% else %} <span class="no-data">N/A</span> {% endif %} </td> <td class="min-value"> {% if data.min_val is not none and data.min_val != 'N/A' %} <span>{{ data.min_val }}</span> {% if data.min_players %} <ul class="player-list"> {% for player in data.min_players %} <li>{{ player }}</li> {% endfor %} </ul> {% endif %} {% elif data.error %} <span class="no-data">{{ data.error }}</span> {% else %} <span class="no-data">N/A</span> {% endif %} </td> </tr> {% endfor %} </tbody>
+                 </table>
+                 {% else %} <p class="info-message">Pro tým {{ selected_team1 }} a zvolené atributy nebyly nalezeny žádné analyzovatelné údaje {% if selected_include_gk == 'no' %} po vyloučení brankářů{% endif %}. Zkuste vybrat jiné atributy nebo změnit rozsah/filtr brankářů.</p>
+                 {% endif %}
+            {% else %} <p class="error-message">Při načítání detailní analýzy týmu {{ selected_team1 }} došlo k chybě.</p>
+            {% endif %}
+
+        {% elif view_mode == 'two_team_comparison' %}
+             {# --- Two Team Comparison Section --- #}
+            <h3 class="comparison-subtitle">Detailní porovnání: {{ selected_team1 }} vs {{ selected_team2 }} (Rozsah: {{ 'Soupiska' if comparison_scope == 'squad' else 'Všichni hráči' }})</h3>
+            <div class="export-button-container">
+                 <a href="{{ url_for('descriptive_analysis_export', team1=selected_team1, team2=selected_team2, comparison_scope=comparison_scope) }}" class="export-button">Exportovat do CSV</a>
+            </div>
+            {% if team_comparison_data %}
+            <table id="teamComparisonTable">
+                 <thead> <tr> <th>Průměrný Atribut</th> <th>{{ selected_team1 }}</th> <th>{{ selected_team2 }}</th> </tr> </thead>
+                 <tbody> {% for attr_data in team_comparison_data %} <tr> <td class="attribute-name">{{ attr_data.name }}</td> <td class="stat-value {{ 'stat-better' if attr_data.t1_better else 'stat-worse' if attr_data.t2_better else '' }}"> {{ attr_data.t1_value }} {% if attr_data.t1_better and attr_data.diff != 0 %}<span class="margin">(+{{ attr_data.diff }})</span>{% endif %} </td> <td class="stat-value {{ 'stat-better' if attr_data.t2_better else 'stat-worse' if attr_data.t1_better else '' }}"> {{ attr_data.t2_value }} {% if attr_data.t2_better and attr_data.diff != 0 %}<span class="margin">(+{{ attr_data.diff }})</span>{% endif %} </td> </tr> {% endfor %} </tbody>
+            </table>
+            {% else %} <p class="error-message">Pro vybrané týmy ({{ selected_team1 }} vs {{ selected_team2 }}) a rozsah ('{{ 'Soupiska' if comparison_scope == 'squad' else 'Všichni hráči' }}') nebylo možné vypočítat porovnání.</p> <p style="text-align: center;"><a href="{{ url_for('descriptive_analysis') }}">Zobrazit přehled statistik</a></p>
+            {% endif %}
+
+        {% elif view_mode == 'overview' %}
+             {# --- Overview Stats Section --- #}
+            <h2>Přehled Statistik Týmů</h2>
+            <div class="button-group">
+                <a href="{{ url_for('descriptive_analysis', scope='all') }}" class="toggle-button {% if current_scope == 'all' %}active{% endif %}"> Statistiky všech hráčů </a>
+                <a href="{{ url_for('descriptive_analysis', scope='squad') }}" class="toggle-button {% if current_scope == 'squad' %}active{% endif %}"> Statistiky soupisky (11) </a>
+            </div>
+            <div class="export-button-container">
+                 <a href="{{ url_for('descriptive_analysis_export', scope=current_scope) }}" class="export-button">Exportovat do CSV</a>
+            </div>
+            {% if team_stats %}
+            <table id="statsTable">
+                <thead> <tr> <th class="sortable" data-sort-key="nationality">Národnost</th> <th class="sortable" data-sort-key="player_count">Počet hráčů {% if current_scope == 'squad' %}(Soupiska){% endif %}</th> <th class="sortable" data-sort-key="avg_age">Prům. Věk</th> <th class="sortable" data-sort-key="avg_height">Prům. Výška (cm)</th> <th class="sortable" data-sort-key="avg_weight">Prům. Váha (kg)</th> <th class="sortable" data-sort-key="avg_rating">Prům. Celk. Hodnocení</th> </tr> </thead>
+                <tbody id="statsTableBody"> {% for stats in team_stats %} <tr> <td data-value="{{ stats.nationality }}">{{ stats.nationality }}</td> <td class="number" data-value="{{ stats.player_count }}">{{ stats.player_count }}</td> <td class="number" data-value="{{ stats.avg_age }}">{{ stats.avg_age }}</td> <td class="number" data-value="{{ stats.avg_height }}">{{ stats.avg_height }}</td> <td class="number" data-value="{{ stats.avg_weight }}">{{ stats.avg_weight }}</td> <td class="number" data-value="{{ stats.avg_rating }}">{{ stats.avg_rating }}</td> </tr> {% endfor %} </tbody>
+            </table>
+            {% else %} <p class="info-message">Nebyly nalezeny žádné statistiky týmů k zobrazení pro zvolený rozsah ({{ current_scope }}).</p>
+            {% endif %}
+
+        {% else %}
+            {# Fallback if view_mode is unexpected - might indicate an error state not caught #}
+            <p class="error-message">Nebylo možné zobrazit požadovaný obsah.</p>
+        {% endif %}
+        {# --- End Conditional Display --- #}
+
+    </div>
+
+    <script>
+        // Wait for the HTML document to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get references to the team select elements
+            const team1Select = document.getElementById('team1');
+            const team2Select = document.getElementById('team2');
+
+            // Function to update the enabled/disabled state of Team 2 select
+            function updateTeam2State() {
+                // Check if Team 1 has a value selected (i.e., not the default empty option)
+                if (team1Select && team1Select.value === '') {
+                    // Team 1 is not selected: Disable Team 2 and reset its value
+                    if (team2Select) {
+                        team2Select.disabled = true;
+                        team2Select.value = ''; // Reset to default "-- Vyberte tým 2 --"
+                    }
+                } else {
+                    // Team 1 is selected: Enable Team 2
+                    if (team2Select) {
+                        team2Select.disabled = false;
+                    }
+                }
+            }
+
+            // --- Initial State ---
+            // Set the initial disabled state of Team 2 when the page loads
+            updateTeam2State();
+
+            // --- Event Listener ---
+            // Add an event listener to the Team 1 select element
+            // When the selection changes, call the updateTeam2State function
+            if (team1Select) { // Ensure team1Select exists before adding listener
+                 team1Select.addEventListener('change', updateTeam2State);
+            } else {
+                console.error("Team 1 select element (#team1) not found.");
+            }
+             // Log to confirm the script is running (optional)
+             console.log("Descriptive analysis page script loaded.");
+
+        }); // End DOMContentLoaded listener
+
+        // --- Keep existing table sorting script if present ---
+        // (The table sorting script from the original file should remain here)
+        document.addEventListener('DOMContentLoaded', () => {
+            const table = document.getElementById('statsTable');
+            if (table) {
+                const headers = table.querySelectorAll('th.sortable');
+                const tableBody = document.getElementById('statsTableBody');
+                if (!headers || !tableBody) {
+                    console.error("Stats table headers/body not found.");
+                } else {
+                    let currentSort = { column: -1, ascending: true };
+                    headers.forEach((header, index) => {
+                        header.addEventListener('click', () => {
+                            const sortKey = header.dataset.sortKey;
+                            if (!sortKey) return;
+                            const isAscending = (currentSort.column === index) ? !currentSort.ascending : true;
+                            currentSort = { column: index, ascending: isAscending };
+                            headers.forEach(h => h.classList.remove('sort-asc', 'sort-desc'));
+                            header.classList.add(isAscending ? 'sort-asc' : 'sort-desc');
+                            sortTable(index, sortKey, isAscending);
+                        });
+                    });
+                    function sortTable(columnIndex, sortKey, ascending) {
+                        const rows = Array.from(tableBody.querySelectorAll('tr'));
+                        const isNumeric = ['player_count', 'avg_age', 'avg_height', 'avg_weight', 'avg_rating'].includes(sortKey);
+                        rows.sort((rowA, rowB) => {
+                            const cellA = rowA.querySelectorAll('td')[columnIndex];
+                            const cellB = rowB.querySelectorAll('td')[columnIndex];
+                            let valueA = cellA?.dataset.value || cellA?.textContent?.trim() || '';
+                            let valueB = cellB?.dataset.value || cellB?.textContent?.trim() || '';
+                            let comparison = 0;
+                            if (isNumeric) {
+                                const numA = parseFloat(valueA.replace(',', '.')) || -Infinity;
+                                const numB = parseFloat(valueB.replace(',', '.')) || -Infinity;
+                                comparison = numA - numB;
+                            } else {
+                                comparison = valueA.toLowerCase().localeCompare(valueB.toLowerCase());
+                            }
+                            return ascending ? comparison : -comparison;
+                        });
+                        while (tableBody.firstChild) { tableBody.removeChild(tableBody.firstChild); }
+                        rows.forEach(row => tableBody.appendChild(row));
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
