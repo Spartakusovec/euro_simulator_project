@@ -1,0 +1,1724 @@
+<!doctype html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Euro Simulátor</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-hover: #0056b3;
+            --secondary-color: #6c757d;
+            --secondary-hover: #5a6268;
+            --light-bg: #f8f9fa;
+            --border-color: #dee2e6;
+            --text-color: #343a40;
+            --text-muted: #6c757d;
+            --card-bg: #ffffff;
+            --header-bg: #e9ecef;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --stat-better: #28a745;
+            --stat-worse: #dc3545;
+            --stat-max: #17a2b8;
+            --stat-min: #ffc107;
+            --link-color: #007bff;
+            --link-hover: #0056b3;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            color: var(--text-color);
+            position: relative;
+            padding-top: 80px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 25px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: var(--text-color);
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+            font-weight: 600;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 1em;
+            font-size: 1.8em;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 1.2em;
+            font-size: 1.5em;
+            font-weight: 500;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 1.2em;
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        h4 {
+            font-size: 1.1em;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        a {
+            color: var(--link-color);
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: var(--link-hover);
+            text-decoration: underline;
+        }
+
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 10px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.3s ease-in-out;
+            flex-wrap: wrap;
+        }
+
+        .nav-title {
+            font-weight: 600;
+            font-size: 1.2em;
+            color: var(--text-color);
+            flex-grow: 1;
+        }
+
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.8em;
+            cursor: pointer;
+            color: var(--primary-color);
+            padding: 0 5px;
+            line-height: 1;
+            margin-left: 15px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links a {
+            margin-left: 18px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95em;
+            padding: 5px 0;
+            border-bottom: 2px solid transparent;
+            transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary-hover);
+            text-decoration: none;
+            border-bottom-color: var(--primary-hover);
+        }
+
+        .nav-hidden {
+            transform: translateY(-100%);
+        }
+
+        .btn,
+        button,
+        input[type="submit"],
+        a.button-link {
+            display: inline-block;
+            padding: 10px 20px;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            text-align: center;
+            text-decoration: none;
+            line-height: 1.4;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        button:disabled,
+        a.button-link:disabled {
+            background-color: #ccc !important;
+            border-color: #bbb !important;
+            color: #888 !important;
+            cursor: not-allowed !important;
+            opacity: 0.65 !important;
+        }
+
+        .btn-primary,
+        button.main-submit {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover,
+        button.main-submit:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-secondary,
+        a.reset-button,
+        a.back-button {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover,
+        a.reset-button:hover,
+        a.back-button:hover {
+            background-color: var(--secondary-hover);
+            border-color: var(--secondary-hover);
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.9em;
+        }
+
+        form {
+            background-color: var(--light-bg);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            align-items: start;
+            margin-bottom: 20px;
+        }
+
+        .position-attribute-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+            margin-bottom: 20px;
+        }
+
+        .form-section,
+        .filter-container,
+        .player-select-div,
+        .attribute-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .submit-container {
+            text-align: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 2px;
+            font-weight: 500;
+            color: var(--text-muted);
+            font-size: 0.95em;
+        }
+
+        select,
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+            background-color: var(--card-bg);
+            height: 42px;
+            font-size: 1em;
+            color: var(--text-color);
+        }
+
+        select {
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236c757d%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.6-3.6%205.4-7.8%205.4-12.8%200-5-1.8-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 10px 10px;
+            padding-right: 35px;
+        }
+
+        select:disabled {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .checkbox-group,
+        .radio-group {
+            border: none;
+            padding: 0;
+            background-color: transparent;
+            border-radius: 4px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 12px;
+        }
+
+        .checkbox-group input[type="checkbox"],
+        .radio-group input[type="radio"] {
+            display: none;
+        }
+
+        .checkbox-group label,
+        .radio-group label.radio-label {
+            display: inline-block;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            margin: 0;
+            line-height: 1.4;
+            white-space: nowrap;
+            font-size: 0.9em;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .checkbox-group label {
+            border-radius: 18px;
+            padding: 6px 14px;
+            flex-grow: 0;
+        }
+
+
+        .checkbox-group input[type="checkbox"]:checked+label,
+        .radio-group input[type="radio"]:checked+label.radio-label {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-hover);
+        }
+
+        .checkbox-group input[type="checkbox"]:not(:checked)+label:hover,
+        .radio-group input[type="radio"]:not(:checked)+label.radio-label:hover {
+            background-color: #e9ecef;
+            border-color: #adb5bd;
+            color: var(--text-color);
+        }
+
+        .selection-buttons {
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+
+        .attribute-group-row {
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+        }
+
+        .attribute-group-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+
+        .attribute-category-header {
+            margin-bottom: 8px;
+        }
+
+        .attribute-category-checkbox {
+            display: none;
+            /* Hide the actual checkbox */
+        }
+
+        label.category-label {
+            display: inline-block;
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            margin: 0;
+            line-height: 1.4;
+            white-space: nowrap;
+            font-size: 0.95em;
+        }
+
+        .attribute-category-checkbox:not(:checked)+label.category-label:hover {
+            background-color: #dde2e6;
+            border-color: #adb5bd;
+        }
+
+        .attribute-category-checkbox:checked+label.category-label {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-hover);
+        }
+
+        .attribute-category-checkbox:indeterminate+label.category-label {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-hover);
+        }
+
+        .attribute-specifics-container {
+            padding-left: 10px;
+            margin-top: 8px;
+        }
+
+        .attribute-specifics-container .checkbox-group {
+            padding-top: 5px;
+        }
+
+        .position-integrated-row {
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+        }
+
+        .position-integrated-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+
+        .position-category-header {
+            margin-bottom: 8px;
+        }
+
+        .position-category-checkbox {
+            display: none;
+        }
+
+        label.category-label.category-label-checked {
+            background-color: var(--primary-color) !important;
+            color: white !important;
+            border-color: var(--primary-hover) !important;
+        }
+
+        label.category-label.category-label-indeterminate {
+            background-color: #daf0FF !important;
+            color: var(--primary-hover) !important;
+            border-color: var(--primary-color) !important;
+        }
+
+        .position-specifics-container {
+            padding-left: 10px;
+            margin-top: 8px;
+        }
+
+        .position-specifics-container .checkbox-group {
+            padding-top: 5px;
+        }
+
+        .position-category-checkbox:not(:checked)+label.category-label:hover {
+            background-color: #dde2e6 !important;
+            border-color: #adb5bd !important;
+        }
+
+        label.category-label {
+            display: inline-block;
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            margin: 0;
+            line-height: 1.4;
+            white-space: nowrap;
+            font-size: 0.95em;
+        }
+
+        .attribute-category-checkbox:not(:checked)+label.category-label:hover,
+        .position-category-checkbox:not(:checked)+label.category-label:hover {
+            background-color: #dde2e6 !important;
+            border-color: #adb5bd !important;
+        }
+
+        .attribute-category-checkbox:checked+label.category-label {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-hover);
+        }
+
+        .attribute-category-checkbox:indeterminate+label.category-label {
+            background-color: #daf0FF !important;
+            color: var(--primary-hover) !important;
+            border-color: var(--primary-color) !important;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px auto 30px auto;
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.07);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            font-size: 0.95em;
+        }
+
+        th,
+        td {
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 15px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: var(--header-bg);
+            font-weight: 600;
+            color: var(--text-color);
+            border-bottom-width: 2px;
+            text-align: center;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: var(--light-bg);
+        }
+
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        td.number,
+        th.number {
+            text-align: right;
+        }
+
+        td.center,
+        th.center {
+            text-align: center;
+        }
+
+        th.sortable {
+            cursor: pointer;
+            position: relative;
+        }
+
+        th.sortable:hover {
+            background-color: #dde2e6;
+        }
+
+        th.sortable::after {
+            content: '';
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            margin-top: -7px;
+            border: 5px solid transparent;
+            opacity: 0.3;
+        }
+
+        th.sortable.sort-asc::after {
+            border-bottom-color: #333;
+            opacity: 1;
+        }
+
+        th.sortable.sort-desc::after {
+            border-top-color: #333;
+            opacity: 1;
+        }
+
+        .attribute-name {
+            font-weight: 500;
+            color: var(--text-muted);
+            width: 35%;
+        }
+
+        .stat-value {
+            width: 25%;
+            font-size: 1.05em;
+            font-weight: 500;
+        }
+
+        .stat-better {
+            color: var(--stat-better);
+            font-weight: 600;
+        }
+
+        .stat-worse {
+            color: var(--stat-worse);
+        }
+
+        .margin {
+            font-size: 0.85em;
+            color: var(--text-muted);
+            margin-left: 5px;
+            font-weight: normal;
+        }
+
+        .flag-emoji {
+            margin-right: 0.5em;
+            vertical-align: middle;
+        }
+
+        .group-header td {
+            background-color: var(--header-bg);
+            font-weight: 600;
+            text-align: left;
+            padding: 10px 15px;
+            color: var(--text-color);
+            border-top: 2px solid var(--border-color);
+        }
+
+        .winner-highlight {
+            font-weight: bold;
+            color: var(--success-color);
+        }
+
+        tr.qualifier {
+            background-color: #d4edda !important;
+        }
+
+        .player-card {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .comparison-cards-container {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .comparison-cards-container .player-card {
+            flex: 1;
+            min-width: 300px;
+            max-width: 400px;
+            margin: 0;
+        }
+
+        .player-card h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            font-size: 1.3em;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .player-card p,
+        .player-card li {
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-size: 0.95em;
+        }
+
+        .player-card p>strong,
+        .player-card li>strong {
+            color: var(--text-color);
+            font-weight: 500;
+            min-width: 120px;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .player-card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+        .player-card li strong {
+            min-width: 160px;
+        }
+
+        .chart-container,
+        #radarChartContainer {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            margin: 30px auto;
+            max-width: 900px;
+            border: 1px solid var(--border-color);
+        }
+
+        .chart-div,
+        #radarChart,
+        .chart {
+            width: 100%;
+            min-height: 450px;
+        }
+
+        .info-message,
+        .error-message {
+            background-color: var(--light-bg);
+            border-left: 4px solid var(--primary-color);
+            padding: 15px 20px;
+            margin: 25px 0;
+            border-radius: 0 4px 4px 0;
+            text-align: center;
+        }
+
+        .error-message {
+            border-left-color: var(--danger-color);
+            color: var(--danger-color);
+        }
+
+        .details-wrapper {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            border: 1px solid #aaa;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.07);
+        }
+
+        details summary {
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1em;
+            padding: 10px 15px;
+            background-color: var(--header-bg);
+            border-bottom: 1px solid #aaa;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            list-style: none;
+            position: relative;
+            padding-left: 35px;
+        }
+
+        details summary::before {
+            content: '▶';
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%) rotate(0deg);
+            transition: transform 0.2s ease;
+            color: var(--text-muted);
+            font-size: 0.8em;
+        }
+
+        details[open] summary::before {
+            transform: translateY(-50%) rotate(90deg);
+        }
+
+        details summary:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        details .details-content {
+            padding: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        details .details-content h3 {
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+            border-bottom: 1px dotted #ccc;
+            padding-bottom: 4px;
+            font-size: 1.1em;
+        }
+
+        details .details-content h3:first-child {
+            margin-top: 0.5em;
+        }
+
+        .carousel-container {
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            margin-bottom: 25px;
+            background-color: #fdfdfd;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .carousel-header {
+            text-align: center;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .carousel-header h4 {
+            margin: 0;
+            color: #555;
+            font-size: 1.1em;
+            border-bottom: none;
+        }
+
+        .carousel-slide {
+            display: none;
+            padding-top: 10px;
+        }
+
+        .carousel-slide.active {
+            display: block;
+        }
+
+        .slide-title {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.15em;
+            color: #333;
+        }
+
+        .carousel-nav {
+            text-align: center;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .carousel-nav button {
+            padding: 8px 15px;
+            margin: 0 5px;
+            cursor: pointer;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.95em;
+            transition: background-color 0.2s ease;
+        }
+
+        .carousel-nav button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .carousel-nav button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .group-overview-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: var(--light-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+        }
+
+        .group-overview-item {
+            border: 1px solid #e0e0e0;
+            padding: 10px 15px;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .group-overview-item h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 1.1em;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            color: #333;
+        }
+
+        .group-teams-table {
+            width: 100%;
+            margin: 0 auto;
+            box-shadow: none;
+            border: none;
+            font-size: 0.95em;
+        }
+
+        .group-teams-table th {
+            background-color: transparent;
+            font-weight: 600;
+            text-align: left;
+            padding: 6px 8px;
+            color: #444;
+            border: none;
+            border-bottom: 1px solid #eee;
+        }
+
+        .group-teams-table td {
+            padding: 6px 8px;
+            border: none;
+            border-bottom: 1px solid #f0f0f0;
+            text-align: left;
+        }
+
+        .group-teams-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .group-teams-table td:first-child {
+            text-align: center;
+            width: 40px;
+            color: var(--text-muted);
+            font-weight: bold;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-4 {
+            margin-top: 1.5rem !important;
+        }
+
+        .mb-3 {
+            margin-bottom: 1rem !important;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .sticky-top {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 30px 0;
+        }
+
+        .back-link {
+            margin-top: 30px;
+            display: block;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .export-button-container {
+            text-align: right;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+
+        @media (max-width: 992px) {
+            .container {
+                max-width: 960px;
+                padding: 20px;
+            }
+
+            .filter-row {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+
+            .position-attribute-row {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .group-overview-container {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 60px;
+            }
+
+            .nav-bar {
+                padding: 5px 15px;
+            }
+
+            .nav-title {
+                flex-grow: 0;
+                margin-right: auto;
+            }
+
+            .nav-toggle {
+                display: block;
+                flex-shrink: 0;
+                margin-left: 10px;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                align-items: flex-start;
+                background-color: white;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                order: 3;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                margin-left: 0;
+                font-size: 1em;
+                padding: 10px 15px;
+                width: 100%;
+                border-bottom: 1px solid var(--border-color);
+                text-align: left;
+            }
+
+            .nav-links a:last-child {
+                border-bottom: none;
+            }
+
+            .nav-links a:hover,
+            .nav-links a.active {
+                background-color: var(--light-bg);
+                color: var(--primary-hover);
+                border-bottom-color: var(--border-color);
+            }
+
+            .nav-links a.active {
+                font-weight: 600;
+                border-bottom-color: var(--primary-hover);
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.6em;
+            }
+
+            h2 {
+                font-size: 1.3em;
+            }
+
+            .filter-row {
+                grid-template-columns: 1fr;
+            }
+
+            .submit-container {}
+
+            .chart-container,
+            #radarChartContainer {
+                padding: 15px;
+                margin: 20px auto;
+            }
+
+            .table-responsive table {
+                font-size: 0.9em;
+            }
+
+            .table-responsive th,
+            .table-responsive td {
+                padding: 8px 10px;
+            }
+
+            .comparison-cards-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .comparison-cards-container .player-card {
+                max-width: none;
+            }
+
+            .export-button-container {
+                text-align: center;
+                margin-top: 20px;
+            }
+
+            .group-overview-container {
+                grid-template-columns: 1fr;
+            }
+
+            .attribute-specifics-container {
+                padding-left: 5px;
+            }
+
+            label.category-label {
+                font-size: 0.9em;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="nav-bar">
+    <div class="nav-title">Euro Simulátor</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+        &#9776; 
+    </button>
+    <div class="nav-links" id="navLinks"> 
+        <a href="{{ url_for('index') }}" class="{{ 'active' if active_page == 'index' }}">Hlavní stránka</a>
+        <a href="{{ url_for('simulation_results') }}" class="{{ 'active' if active_page == 'simulation' }}">Výsledky Simulace</a>
+        <a href="{{ url_for('descriptive_analysis') }}" class="{{ 'active' if active_page == 'analysis' }}">Týmová Analýza</a>
+        <a href="{{ url_for('player_comparison') }}" class="{{ 'active' if active_page == 'comparison' }}">Porovnání Hráčů</a>
+        <a href="{{ url_for('attribute_distributions') }}" class="{{ 'active' if active_page == 'distributions' }}">Distribuce Atributů</a>
+        <a href="{{ url_for('correlation_analysis') }}" class="{{ 'active' if active_page == 'correlation' }}">Korelační Analýza</a>
+    </div>
+</nav>
+    <div class="container">
+        <h1>{{ title }}</h1>
+
+        <form method="get" action="{{ url_for('attribute_distributions') }}">
+            <div class="filter-row">
+                 <div class="form-section"> 
+                    <label for="chart_type">Typ grafu:</label>
+                    <div class="radio-group">
+                        <input type="radio" name="chart_type" value="histogram" id="chart_type_histogram" {% if chart_type == 'histogram' %}checked{% endif %}>
+                        <label for="chart_type_histogram" class="radio-label">Histogram</label>
+                        <input type="radio" name="chart_type" value="box" id="chart_type_box" {% if chart_type == 'box' %}checked{% endif %}>
+                        <label for="chart_type_box" class="radio-label">Box Plot</label>
+                    </div>
+                </div>
+                <div class="form-section"> 
+                    <label for="scope">Rozsah hráčů:</label>
+                    <div class="radio-group">
+                        <input type="radio" name="scope" value="all" id="scope-all" {% if scope == 'all' %}checked{% endif %}>
+                        <label for="scope-all" class="radio-label">Všichni hráči</label>
+                        <input type="radio" name="scope" value="squad" id="scope-squad" {% if scope == 'squad' %}checked{% endif %}>
+                        <label for="scope-squad" class="radio-label">Soupisky</label>
+                    </div>
+                </div>
+                <div class="form-section"> 
+                    <label for="team">Vybrat tým (nepovinné):</label>
+                    <select name="team" id="team">
+                        <option value="">-- Všechny týmy --</option>
+                        {% for team in all_teams %}
+                            <option value="{{ team }}" {% if selected_team == team %}selected{% endif %}>
+                                {{ get_flag_emoji(team) }} {{ team }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="position-attribute-row">
+                <div class="form-section">
+                    <label>Filtrovat podle pozice:</label>
+                    <div class="selection-buttons" id="position-selection-buttons">
+                    </div>
+                    <div id="position-groups-container"> {# Container for position groups #}
+                        {% if position_categories and all_positions %}
+                            {% for category, category_positions_list in position_categories.items() %}
+                            <div class="position-integrated-row"> {# Use the same class as correlation_analysis #}
+                                <div class="position-category-header">
+                                    <input class="position-category-checkbox" type="checkbox"
+                                           id="pos_category_{{ category|replace(' ', '_')|lower }}" value="{{ category }}"
+                                           data-category="{{ category }}"> {# Use data-category #}
+                                    <label class="category-label" for="pos_category_{{ category|replace(' ', '_')|lower }}">{{ category }}</label>
+                                </div>
+                                <div class="position-specifics-container">
+                                    <div class="checkbox-group">
+                                        {# Loop through all available positions fetched from DB #}
+                                        {% for pos_full_name in all_positions %}
+                                            {# MODIFIED: Use 'in' operator for simpler check #}
+                                            {% if pos_full_name in category_positions_list %}
+                                                <input type="checkbox" name="position_filter" value="{{ pos_full_name }}"
+                                                       id="pos-{{ pos_full_name|replace(' ', '_')|lower }}"
+                                                       class="specific-position-checkbox" {# Added class #}
+                                                       {% if pos_full_name in selected_positions %}checked{% endif %}
+                                                       data-category="{{ category }}"> {# Add data-category attribute #}
+                                                <label for="pos-{{ pos_full_name|replace(' ', '_')|lower }}">{{ pos_full_name }}</label>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p>Nejsou dostupné žádné pozice k výběru nebo nejsou seskupeny.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="attribute-container">
+                    <label>Vybrat atributy k analýze:</label>
+                    <div class="selection-buttons" id="attribute-selection-buttons">
+                    </div>
+                    <div id="attribute-groups-container">
+                        {% if attributes_by_group %}
+                            {% for group, attrs in attributes_by_group.items() %}
+                            <div class="attribute-group-row">
+                                <div class="attribute-category-header">
+                                    <input class="attribute-category-checkbox" type="checkbox"
+                                           id="attr_category_{{ group|replace(' ', '_')|lower }}" value="{{ group }}"
+                                           data-group="{{ group }}">
+                                    <label class="category-label" for="attr_category_{{ group|replace(' ', '_')|lower }}">{{ group }}</label>
+                                </div>
+                                <div class="attribute-specifics-container">
+                                    <div class="checkbox-group">
+                                        {% for attr in attrs %}
+                                            <input type="checkbox" name="attributes" id="attr-{{ attr }}" value="{{ attr }}"
+                                                   class="attribute-checkbox" {% if attr in selected_attributes %}checked{% endif %}
+                                                   data-group="{{ group }}"> {# Add data-group attribute #}
+                                            <label for="attr-{{ attr }}">{{ attr.replace('_', ' ').title() }}</label>
+                                        {% else %}
+                                            <p>V této skupině nejsou žádné dostupné atributy.</p>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p>Nejsou dostupné žádné atributy k výběru nebo nejsou seskupeny.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+             <div class="submit-container">
+                 <button type="submit" id="submit-distributions-btn" class="btn btn-primary">Zobrazit distribuce</button>
+                 <a id="reset-filters-btn" href="#" class="btn btn-secondary">Resetovat filtry</a>
+             </div>
+        </form>
+
+        {% if distribution_charts %}
+            <h2 class="chart-title">Distribuce vybraných atributů</h2>
+            {% for chart in distribution_charts %}
+                <div class="chart-container">
+                    {# *** MODIFIED: Check for errors or empty JSON before rendering *** #}
+                    {% if chart.error %}
+                        <div class="error-message">
+                            <strong>Chyba při generování grafu pro '{{ chart.attribute.replace('_', ' ').title() }}':</strong>
+                            <p>{{ chart.error }}</p>
+                        </div>
+                    {% elif chart.json and chart.json != '{}' %}
+                        <div id="chart-{{ chart.attribute }}" class="chart-div"></div>
+                    {% else %}
+                         <div class="info-message">
+                            <p>Pro atribut '{{ chart.attribute.replace('_', ' ').title() }}' nejsou dostupná žádná data k zobrazení grafu.</p>
+                        </div>
+                    {% endif %}
+                    {# *** END MODIFIED Section *** #}
+                </div>
+            {% endfor %}
+        {% elif selected_attributes %}
+            <div class="info-message">
+                <p>Nelze zobrazit distribuce pro vybrané atributy s aktuálními filtry. Zkuste prosím upravit filtrování.</p>
+            </div>
+        {% else %}
+            <div class="info-message">
+                <p>Vyberte atributy výše pro zobrazení jejich distribuce. Můžete filtrovat podle týmu, pozice a rozsahu hráčů.</p>
+            </div>
+        {% endif %}
+
+        {% if selected_players %}
+            <div class="mt-4"> {# Simplified structure slightly #}
+                 <h3>Hráči ve výběrů ({{ selected_players|length }})</h3>
+                 <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                     <table> {# Removed some bootstrap classes, using unified style #}
+                         <thead class="sticky-top">
+                             <tr>
+                                 <th>#</th>
+                                 <th>Hráč</th>
+                                 <th>Pozice</th>
+                                 <th>Národnost</th> 
+                                 {% if selected_attributes_display %}
+                                     {% for attr_key, attr_display_name in selected_attributes_display.items() %}
+                                         <th>{{ attr_display_name }}</th>
+                                     {% endfor %}
+                                 {% endif %}
+                             </tr>
+                         </thead>
+                         <tbody>
+                             {% for player in selected_players %}
+                             <tr>
+                                 <td>{{ loop.index }}</td>
+                                 <td>{{ player.player_name | default('N/A') }}</td>
+                                 <td>{{ player.position | default('N/A') }}</td>
+                                 <td>
+                                     <span class="flag-emoji">{{ get_flag_emoji(player.nationality) }}</span>
+                                     {{ player.nationality | default('N/A') }}
+                                 </td>
+                                 {% if selected_attributes %}
+                                     {% for attr_key in selected_attributes %}
+                                         <td>{{ player.get(attr_key, 'N/A') }}</td>
+                                     {% endfor %}
+                                 {% endif %}
+                             </tr>
+                             {% endfor %}
+                         </tbody>
+                     </table>
+                 </div>
+             </div>
+        {% elif selected_team or selected_positions %}
+             <div class="info-message mt-4"> <p>Pro zadaná kritéria nebyli nalezeni žádní hráči.</p> </div>
+        {% endif %}
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("Plotly version:", Plotly.version);
+            
+            let chartsRendered = 0;
+            {% for chart in distribution_charts %}
+                {# Only attempt to plot if there's valid JSON and no error #}
+                {% if not chart.error and chart.json and chart.json != '{}' %}
+                    try {
+                        console.log("Attempting to render chart for {{ chart.attribute }}");
+                        const chartData_{{ loop.index }} = {{ chart.json|safe }};
+                        const chartDiv_{{ loop.index }} = document.getElementById('chart-{{ chart.attribute }}');
+
+                        if (chartDiv_{{ loop.index }} && chartData_{{ loop.index }} && chartData_{{ loop.index }}.data && chartData_{{ loop.index }}.layout) {
+                             console.log("Chart data structure looks valid for {{ chart.attribute }}:", chartData_{{ loop.index }});
+                             Plotly.newPlot(chartDiv_{{ loop.index }}, chartData_{{ loop.index }}.data, chartData_{{ loop.index }}.layout, {responsive: true});
+                             console.log("Successfully rendered chart for {{ chart.attribute }}");
+                             chartsRendered++;
+                        } else if (chartDiv_{{ loop.index }}) {
+                             console.error("Invalid or missing chart data structure for {{ chart.attribute }}:", chartData_{{ loop.index }});
+                             chartDiv_{{ loop.index }}.innerHTML = '<p class="error-message">Chybná struktura dat pro graf.</p>';
+                         }
+                    } catch (e) {
+                        console.error("Error rendering chart for {{ chart.attribute }}:", e);
+                        const errorDiv = document.getElementById('chart-{{ chart.attribute }}');
+                        if (errorDiv) {
+                            errorDiv.innerHTML = '<p class="error-message">Nepodařilo se vykreslit graf. Chyba v JS: ' + e.message + '</p>';
+                        }
+                    }
+                {% elif chart.error %}
+                    console.warn("Skipping chart rendering for {{ chart.attribute }} due to backend error: {{ chart.error|escapejs }}");
+                {% else %}
+                    console.warn("Skipping chart rendering for {{ chart.attribute }} due to missing/empty JSON data.");
+                {% endif %}
+            {% endfor %}
+
+            if (chartsRendered === 0 && {{ distribution_charts|length }} > 0) {
+                console.log("No charts rendered successfully. Adding test chart to debug Plotly functionality.");
+                const testContainer = document.createElement('div');
+                testContainer.className = 'chart-container';
+                testContainer.innerHTML = '<h3>Testovací graf</h3><div id="test-chart" style="width:100%;height:400px;"></div>';
+                document.querySelector('.container').appendChild(testContainer);
+                
+                try {
+                    Plotly.newPlot('test-chart', [{
+                        x: [1, 2, 3, 4, 5],
+                        y: [1, 2, 4, 8, 16],
+                        type: 'scatter'
+                    }], {
+                        title: 'Test Plotly Chart'
+                    });
+                    console.log("Test chart rendered successfully");
+                } catch (e) {
+                    console.error("Test chart failed:", e);
+                    document.getElementById('test-chart').innerHTML = 
+                        '<p class="error-message">Nepodařilo se vykreslit testovací graf. Plotly knihovna nefunguje správně.</p>';
+                }
+            }
+
+            const submitButton = document.getElementById('submit-distributions-btn');
+            const resetButton = document.getElementById('reset-filters-btn');
+            const attributeGroupContainer = document.getElementById('attribute-groups-container');
+            const positionGroupContainer = document.getElementById('position-groups-container'); 
+            const positionCategoryCheckboxes = positionGroupContainer ? positionGroupContainer.querySelectorAll('.position-category-checkbox') : [];
+            const specificPositionCheckboxes = positionGroupContainer ? positionGroupContainer.querySelectorAll('.specific-position-checkbox') : [];
+            const navBar = document.querySelector('.nav-bar');
+            const navToggle = document.getElementById('navToggle');
+            const navLinks = document.getElementById('navLinks');
+
+            function updateSubmitButtonState() {
+                if (!submitButton || !attributeGroupContainer) return;
+                const individualAttributeCheckboxes = attributeGroupContainer.querySelectorAll('.attribute-checkbox');
+                let isAnyChecked = Array.from(individualAttributeCheckboxes).some(checkbox => checkbox.checked);
+                submitButton.disabled = !isAnyChecked;
+            }
+
+            if (attributeGroupContainer) {
+                const categoryCheckboxes = attributeGroupContainer.querySelectorAll('.attribute-category-checkbox');
+                const individualCheckboxes = attributeGroupContainer.querySelectorAll('.attribute-checkbox');
+
+                function syncCategoryCheckbox(categoryCheckbox) {
+                    const groupName = categoryCheckbox.dataset.group;
+                    const groupCheckboxes = attributeGroupContainer.querySelectorAll(`.attribute-checkbox[data-group="${groupName}"]`);
+                    if (groupCheckboxes.length > 0) {
+                        const allChecked = Array.from(groupCheckboxes).every(cb => cb.checked);
+                        const noneChecked = Array.from(groupCheckboxes).every(cb => !cb.checked);
+                        categoryCheckbox.checked = allChecked;
+                        categoryCheckbox.indeterminate = !allChecked && !noneChecked;
+                    } else {
+                        categoryCheckbox.checked = false;
+                        categoryCheckbox.indeterminate = false;
+                    }
+                }
+
+                categoryCheckboxes.forEach(categoryCheckbox => {
+                    categoryCheckbox.addEventListener('change', function() {
+                        const groupName = this.dataset.group;
+                        const isChecked = this.checked;
+                        const groupCheckboxes = attributeGroupContainer.querySelectorAll(`.attribute-checkbox[data-group="${groupName}"]`);
+                        groupCheckboxes.forEach(cb => {
+                            if (cb.checked !== isChecked) {
+                                cb.checked = isChecked;
+                                cb.dispatchEvent(new Event('change')); 
+                            }
+                        });
+                        this.indeterminate = false; 
+                        updateSubmitButtonState(); 
+                    });
+                    syncCategoryCheckbox(categoryCheckbox);
+                });
+
+                individualCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        const groupName = this.dataset.group;
+                        const categoryCheckbox = attributeGroupContainer.querySelector(`.attribute-category-checkbox[data-group="${groupName}"]`);
+                        if (categoryCheckbox) {
+                            syncCategoryCheckbox(categoryCheckbox);
+                        }
+                        updateSubmitButtonState(); 
+                    });
+                });
+
+                function createSelectionButtons(buttonContainerId, targetContainer, checkboxSelector, syncCategories = false) {
+                    const buttonContainer = document.getElementById(buttonContainerId);
+                    if (!buttonContainer || !targetContainer) return;
+
+                    buttonContainer.innerHTML = ''; 
+
+                    const selectAll = document.createElement('button');
+                    selectAll.type = 'button';
+                    selectAll.className = 'btn btn-sm btn-secondary';
+                    selectAll.textContent = 'Vybrat vše';
+                    selectAll.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        let changed = false;
+                        targetContainer.querySelectorAll(checkboxSelector).forEach(cb => {
+                            if (!cb.checked) {
+                                cb.checked = true;
+                                cb.dispatchEvent(new Event('change'));
+                                changed = true;
+                            }
+                        });
+                        if (changed && syncCategories) {
+                            categoryCheckboxes.forEach(syncCategoryCheckbox);
+                        }
+                        if (changed && checkboxSelector.includes('attribute-checkbox')) {
+                             updateSubmitButtonState(); 
+                        }
+                    });
+
+                    const selectNone = document.createElement('button');
+                    selectNone.type = 'button';
+                    selectNone.className = 'btn btn-sm btn-secondary';
+                    selectNone.textContent = 'Zrušit výběr';
+                    selectNone.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        let changed = false;
+                        targetContainer.querySelectorAll(checkboxSelector).forEach(cb => {
+                            if (cb.checked) {
+                                cb.checked = false;
+                                cb.dispatchEvent(new Event('change'));
+                                changed = true;
+                            }
+                        });
+                        if (changed && syncCategories) {
+                            categoryCheckboxes.forEach(syncCategoryCheckbox);
+                        }
+                         if (changed && checkboxSelector.includes('attribute-checkbox')) {
+                             updateSubmitButtonState(); 
+                        }
+                    });
+
+                    buttonContainer.appendChild(selectAll);
+                    buttonContainer.appendChild(selectNone);
+                }
+
+                createSelectionButtons('attribute-selection-buttons', attributeGroupContainer, '.attribute-checkbox', true);
+
+            } else {
+                console.error("Attribute group container (#attribute-groups-container) not found!");
+                const attrButtonContainer = document.getElementById('attribute-selection-buttons');
+                if (attrButtonContainer) attrButtonContainer.innerHTML = '<p>Chyba načítání atributů.</p>';
+            }
+
+            updateSubmitButtonState();
+
+            if (resetButton) {
+                resetButton.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const selectedChartTypeInput = document.querySelector('input[name="chart_type"]:checked');
+                    const chartType = selectedChartTypeInput ? selectedChartTypeInput.value : 'histogram';
+                    const baseUrl = window.location.origin + window.location.pathname;
+                    window.location.href = `${baseUrl}?chart_type=${chartType}`;
+                });
+            }
+
+            let lastScrollTop = 0;
+            const mobileMaxWidthNav = 768;
+            const scrollThresholdNav = 5;
+
+            if (navToggle && navLinks) {
+                navToggle.addEventListener('click', () => {
+                    navLinks.classList.toggle('active');
+                    if (navLinks.classList.contains('active') && window.innerWidth <= mobileMaxWidthNav && navBar) {
+                        navBar.classList.remove('nav-hidden');
+                    }
+                });
+            } else {
+                console.error("Navbar toggle or links container not found!");
+            }
+
+            if (navBar && navLinks) {
+                window.addEventListener('scroll', function() {
+                    if (window.innerWidth <= mobileMaxWidthNav && !navLinks.classList.contains('active')) {
+                        let currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                        if (currentScrollTop > lastScrollTop && currentScrollTop > navBar.offsetHeight) {
+                            if (Math.abs(lastScrollTop - currentScrollTop) > scrollThresholdNav) {
+                                navBar.classList.add('nav-hidden');
+                            }
+                        } else {
+                            navBar.classList.remove('nav-hidden');
+                        }
+                        lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
+                    } else {
+                        navBar.classList.remove('nav-hidden');
+                    }
+                }, false);
+            }
+
+            if (positionGroupContainer && positionCategoryCheckboxes.length > 0) {
+                console.log("Initializing position category logic...");
+
+                function syncPositionCategoryCheckbox(categoryCheckbox) {
+                    const categoryName = categoryCheckbox.dataset.category;
+                    const label = categoryCheckbox.nextElementSibling;
+                    const groupCheckboxes = positionGroupContainer.querySelectorAll(`.specific-position-checkbox[data-category="${categoryName}"]`);
+
+                    if (!label) return; 
+                    label.classList.remove('category-label-checked', 'category-label-indeterminate'); 
+
+                    if (groupCheckboxes.length > 0) {
+                        const allChecked = Array.from(groupCheckboxes).every(cb => cb.checked);
+                        const noneChecked = Array.from(groupCheckboxes).every(cb => !cb.checked);
+
+                        categoryCheckbox.checked = allChecked;
+                        categoryCheckbox.indeterminate = !allChecked && !noneChecked;
+
+                        if (allChecked) {
+                            label.classList.add('category-label-checked');
+                        } else if (!noneChecked) { 
+                            label.classList.add('category-label-indeterminate');
+                        }
+                    } else {
+                        categoryCheckbox.checked = false;
+                        categoryCheckbox.indeterminate = false;
+                    }
+                }
+
+                positionCategoryCheckboxes.forEach(categoryCheckbox => {
+                    categoryCheckbox.addEventListener('change', function() {
+                        const categoryName = this.dataset.category;
+                        const isChecked = this.checked;
+                        const groupCheckboxes = positionGroupContainer.querySelectorAll(`.specific-position-checkbox[data-category="${categoryName}"]`);
+                        console.log(`Position category ${categoryName} changed to ${isChecked}`);
+
+                        groupCheckboxes.forEach(cb => {
+                            if (cb.checked !== isChecked) {
+                                cb.checked = isChecked;
+                               
+                            }
+                        });
+                        this.indeterminate = false;
+
+                        const label = this.nextElementSibling;
+                        if (label) {
+                            label.classList.remove('category-label-checked', 'category-label-indeterminate');
+                            if (isChecked) {
+                                label.classList.add('category-label-checked');
+                            }
+                        }
+                    });
+                    syncPositionCategoryCheckbox(categoryCheckbox); 
+                });
+
+                specificPositionCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        const categoryName = this.dataset.category;
+                        const categoryCheckbox = positionGroupContainer.querySelector(`.position-category-checkbox[data-category="${categoryName}"]`);
+                        if (categoryCheckbox) {
+                            console.log(`Specific position ${this.value} changed, syncing category ${categoryName}`);
+                            syncPositionCategoryCheckbox(categoryCheckbox);
+                        }
+                    });
+                });
+
+                function createSelectionButtons(buttonContainerId, targetContainer, checkboxSelector, syncFunction = null, categoryCheckboxSelector = null) {
+                    const buttonContainer = document.getElementById(buttonContainerId);
+                    if (!buttonContainer || !targetContainer) {
+                        console.warn(`Cannot create buttons: Button container '${buttonContainerId}' or target container not found.`);
+                        return;
+                    }
+
+                    buttonContainer.innerHTML = ''; 
+
+                    const selectAll = document.createElement('button');
+                    selectAll.type = 'button';
+                    selectAll.className = 'btn btn-sm btn-secondary';
+                    selectAll.textContent = 'Vybrat vše';
+                    selectAll.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        let changed = false;
+                        targetContainer.querySelectorAll(checkboxSelector).forEach(cb => {
+                            if (!cb.checked) {
+                                cb.checked = true;
+                                changed = true;
+                            }
+                        });
+                        if (changed && syncFunction && categoryCheckboxSelector) {
+                            targetContainer.querySelectorAll(categoryCheckboxSelector).forEach(syncFunction);
+                        }
+                        if (changed && checkboxSelector.includes('attribute-checkbox')) {
+                             updateSubmitButtonState(); 
+                        }
+                    });
+
+                    const selectNone = document.createElement('button');
+                    selectNone.type = 'button';
+                    selectNone.className = 'btn btn-sm btn-secondary';
+                    selectNone.textContent = 'Zrušit výběr';
+                    selectNone.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        let changed = false;
+                        targetContainer.querySelectorAll(checkboxSelector).forEach(cb => {
+                            if (cb.checked) {
+                                cb.checked = false;
+                                changed = true;
+                            }
+                        });
+                        if (changed && syncFunction && categoryCheckboxSelector) {
+                            targetContainer.querySelectorAll(categoryCheckboxSelector).forEach(syncFunction);
+                        }
+                         if (changed && checkboxSelector.includes('attribute-checkbox')) {
+                             updateSubmitButtonState(); 
+                        }
+                    });
+
+                    buttonContainer.appendChild(selectAll);
+                    buttonContainer.appendChild(selectNone);
+                }
+
+                if (attributeGroupContainer) {
+                    let syncAttrFunc = null;
+                    if (typeof syncCategoryCheckbox === "function") {
+                       const syncAttributeCategoryCheckbox = (categoryCheckbox) => {
+                            const groupName = categoryCheckbox.dataset.group; 
+                            const label = categoryCheckbox.nextElementSibling;
+                            const groupCheckboxes = attributeGroupContainer.querySelectorAll(`.attribute-checkbox[data-group="${groupName}"]`);
+
+                            if (!label) return;
+                            label.classList.remove('category-label-checked', 'category-label-indeterminate');
+
+                            if (groupCheckboxes.length > 0) {
+                                const allChecked = Array.from(groupCheckboxes).every(cb => cb.checked);
+                                const noneChecked = Array.from(groupCheckboxes).every(cb => !cb.checked);
+                                categoryCheckbox.checked = allChecked;
+                                categoryCheckbox.indeterminate = !allChecked && !noneChecked;
+                                if (allChecked) label.classList.add('category-label-checked');
+                                else if (!noneChecked) label.classList.add('category-label-indeterminate');
+                            } else {
+                                categoryCheckbox.checked = false;
+                                categoryCheckbox.indeterminate = false;
+                            }
+                       };
+                       syncAttrFunc = syncAttributeCategoryCheckbox;
+                    }
+                    createSelectionButtons('attribute-selection-buttons', attributeGroupContainer, '.attribute-checkbox', syncAttrFunc, '.attribute-category-checkbox');
+                }
+
+
+                createSelectionButtons('position-selection-buttons', positionGroupContainer, '.specific-position-checkbox', syncPositionCategoryCheckbox, '.position-category-checkbox');
+
+            } else {
+                console.warn("Position group container or category checkboxes not found. Position category logic skipped.");
+                const oldPositionCheckboxGroup = document.querySelector('.form-section .checkbox-group:not(#position-groups-container .checkbox-group)');
+                if (oldPositionCheckboxGroup) {
+                     createSelectionButtons('position-selection-buttons', oldPositionCheckboxGroup, 'input[name="position_filter"]');
+                }
+            }
+
+        }); 
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,1704 @@
+<!doctype html>
+<html lang="cs">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Euro Simulátor</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-hover: #0056b3;
+            --secondary-color: #6c757d;
+            --secondary-hover: #5a6268;
+            --light-bg: #f8f9fa;
+            --border-color: #dee2e6;
+            --text-color: #343a40;
+            --text-muted: #6c757d;
+            --card-bg: #ffffff;
+            --header-bg: #e9ecef;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --stat-better: #28a745;
+            --stat-worse: #dc3545;
+            --stat-max: #17a2b8;
+            --stat-min: #ffc107;
+            --link-color: #007bff;
+            --link-hover: #0056b3;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            color: var(--text-color);
+            position: relative;
+            padding-top: 80px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 25px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: var(--text-color);
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+            font-weight: 600;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 1em;
+            font-size: 1.8em;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 1.2em;
+            font-size: 1.5em;
+            font-weight: 500;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 1.2em;
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        h4 {
+            font-size: 1.1em;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        a {
+            color: var(--link-color);
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: var(--link-hover);
+            text-decoration: underline;
+        }
+
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 10px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.3s ease-in-out;
+            flex-wrap: wrap;
+        }
+
+        .nav-title {
+            font-weight: 600;
+            font-size: 1.2em;
+            color: var(--text-color);
+            flex-grow: 1;
+        }
+
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.8em;
+            cursor: pointer;
+            color: var(--primary-color);
+            padding: 0 5px;
+            line-height: 1;
+            margin-left: 15px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links a {
+            margin-left: 18px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95em;
+            padding: 5px 0;
+            border-bottom: 2px solid transparent;
+            transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary-hover);
+            text-decoration: none;
+            border-bottom-color: var(--primary-hover);
+        }
+
+        .nav-hidden {
+            transform: translateY(-100%);
+        }
+
+        .btn,
+        button,
+        input[type="submit"],
+        a.button-link {
+            display: inline-block;
+            padding: 10px 20px;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            text-align: center;
+            text-decoration: none;
+            line-height: 1.4;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-primary,
+        button.main-submit {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover,
+        button.main-submit:hover {
+            background-color: var (--primary-hover);
+            border-color: var(--primary-hover);
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-secondary,
+        a.reset-button,
+        a.back-button {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover,
+        a.reset-button:hover,
+        a.back-button:hover {
+            background-color: var(--secondary-hover);
+            border-color: var(--secondary-hover);
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.9em;
+        }
+
+        form {
+            background-color: var(--light-bg);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+        }
+
+        .filter-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            align-items: start;
+            margin-bottom: 20px;
+        }
+
+        .position-attribute-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+            margin-bottom: 20px;
+        }
+
+        .form-section,
+        .filter-container,
+        .attribute-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .position-integrated-row {
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+        }
+
+        .position-integrated-row:last-child {
+            border-bottom: none;
+        }
+
+
+        label {
+            display: block;
+            margin-bottom: 2px;
+            font-weight: 500;
+            color: var(--text-muted);
+            font-size: 0.95em;
+        }
+
+        select,
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+            background-color: var(--card-bg);
+            height: 42px;
+            font-size: 1em;
+            color: var(--text-color);
+        }
+
+        select {
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236c757d%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.6-3.6%205.4-7.8%205.4-12.8%200-5-1.8-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 10px 10px;
+            padding-right: 35px;
+        }
+
+        select:disabled {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        select[multiple] {
+            height: auto;
+            min-height: 120px;
+            padding: 8px;
+            background-image: none;
+        }
+
+        .checkbox-group,
+        .radio-group {
+            border: none;
+            padding: 5px 0;
+            background-color: transparent;
+            border-radius: 4px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 12px;
+        }
+
+        .checkbox-group input[type="checkbox"],
+        .radio-group input[type="radio"] {
+            display: none;
+        }
+
+        .checkbox-group label,
+        .radio-group label.radio-label {
+            display: inline-block;
+            padding: 6px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            background-color: var(--card-bg);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            margin: 0;
+            line-height: 1.4;
+            white-space: nowrap;
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+        .radio-group label.radio-label {
+            border-radius: 6px;
+            padding: 8px 12px;
+            flex-grow: 1;
+        }
+
+        .radio-group input[type="radio"]:checked+label.radio-label {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-hover);
+        }
+
+
+        .checkbox-group input[type="checkbox"]:checked+label {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-hover);
+        }
+
+        .selection-buttons {
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px auto 30px auto;
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.07);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            font-size: 0.95em;
+        }
+
+        th,
+        td {
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 15px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: var(--header-bg);
+            font-weight: 600;
+            color: var(--text-color);
+            border-bottom-width: 2px;
+            text-align: center;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: var(--light-bg);
+        }
+
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        td.number,
+        th.number {
+            text-align: right;
+        }
+
+        td.center,
+        th.center {
+            text-align: center;
+        }
+
+        th.sortable {
+            cursor: pointer;
+            position: relative;
+        }
+
+        th.sortable:hover {
+            background-color: #dde2e6;
+        }
+
+        th.sortable::after {
+            content: '';
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            margin-top: -7px;
+            border: 5px solid transparent;
+            opacity: 0.3;
+        }
+
+        th.sortable.sort-asc::after {
+            border-bottom-color: #333;
+            opacity: 1;
+        }
+
+        th.sortable.sort-desc::after {
+            border-top-color: #333;
+            opacity: 1;
+        }
+
+        .attribute-name {
+            font-weight: 500;
+            color: var(--text-muted);
+            width: 35%;
+        }
+
+        .stat-value {
+            width: 25%;
+            font-size: 1.05em;
+            font-weight: 500;
+        }
+
+        .stat-better {
+            color: var(--stat-better);
+            font-weight: 600;
+        }
+
+        .stat-worse {
+            color: var(--stat-worse);
+        }
+
+        .margin {
+            font-size: 0.85em;
+            color: var(--text-muted);
+            margin-left: 5px;
+            font-weight: normal;
+        }
+
+        .flag-emoji {
+            margin-right: 0.5em;
+            vertical-align: middle;
+        }
+
+        .chart-container {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            margin: 30px auto;
+            max-width: 900px;
+            border: 1px solid var(--border-color);
+        }
+
+        .chart-div,
+        .chart {
+            width: 100%;
+            min-height: 450px;
+        }
+
+        #correlation-chart {
+            width: 100%;
+            height: 800px;
+        }
+
+        .info-message,
+        .error-message {
+            background-color: var(--light-bg);
+            border-left: 4px solid var(--primary-color);
+            padding: 15px 20px;
+            margin: 25px 0;
+            border-radius: 0 4px 4px 0;
+            text-align: center;
+        }
+
+        .error-message {
+            border-left-color: var(--danger-color);
+            color: var(--danger-color);
+        }
+
+        .attribute-group {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: white;
+        }
+
+        .attribute-group-title {
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: var(--primary-color);
+        }
+
+        .attribute-selection-container {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: white;
+        }
+
+        .position-category-group {
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: white;
+            overflow: hidden;
+        }
+
+        .position-category-title {
+            background-color: var(--light-bg);
+            padding: 8px 12px;
+            font-weight: 500;
+            color: var(--text-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .position-category-group .checkbox-group {
+            padding: 10px;
+            margin-bottom: 0;
+        }
+
+        .position-category-header {
+            background-color: transparent;
+            padding: 0;
+            border-bottom: none;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .position-category-checkbox,
+        .attribute-category-checkbox {
+            display: none;
+        }
+
+        label.category-label {
+            display: inline-block;
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            margin: 0;
+            line-height: 1.4;
+            white-space: nowrap;
+            font-size: 0.95em;
+        }
+
+        .position-category-checkbox:not(:checked)+label.category-label:hover,
+        .attribute-category-checkbox:not(:checked)+label.category-label:hover {
+            background-color: #dde2e6;
+            border-color: #adb5bd;
+        }
+
+        label.category-label.category-label-checked {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-hover);
+        }
+
+        label.category-label.category-label-indeterminate {
+            background-color: #daf0FF;
+            color: var(--primary-hover);
+            border-color: var(--primary-color);
+        }
+
+        label.category-label.category-label-checked {
+            background-color: var(--primary-color) !important;
+            color: white !important;
+            border-color: var(--primary-hover) !important;
+        }
+
+        label.category-label.category-label-indeterminate {
+            background-color: #daf0FF !important;
+            color: var (--primary-hover) !important;
+            border-color: var(--primary-color) !important;
+        }
+
+        .position-category-checkbox:not(:checked)+label.category-label:hover,
+        .attribute-category-checkbox:not(:checked)+label.category-label:hover {
+            background-color: #dde2e6 !important;
+            border-color: #adb5bd !important;
+        }
+
+
+        .submit-container {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 60px;
+            }
+
+            .nav-bar {
+                padding: 5px 15px;
+            }
+
+            .nav-title {
+                flex-grow: 0;
+                margin-right: auto;
+            }
+
+            .nav-toggle {
+                display: block;
+                flex-shrink: 0;
+                margin-left: 10px;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                align-items: flex-start;
+                background-color: white;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                order: 3;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                margin-left: 0;
+                font-size: 1em;
+                padding: 10px 15px;
+                width: 100%;
+                border-bottom: 1px solid var(--border-color);
+                text-align: left;
+            }
+
+            .nav-links a:last-child {
+                border-bottom: none;
+            }
+
+            .nav-links a:hover,
+            .nav-links a.active {
+                background-color: var(--light-bg);
+                color: var(--primary-hover);
+                border-bottom-color: var(--border-color);
+            }
+
+            .nav-links a.active {
+                font-weight: 600;
+                border-bottom-color: var(--primary-hover);
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.6em;
+            }
+
+            h2 {
+                font-size: 1.3em;
+            }
+
+            .filter-form {
+                grid-template-columns: 1fr;
+            }
+
+            .position-attribute-row {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .submit-container {
+            }
+
+            .chart-container {
+                padding: 15px;
+                margin: 20px auto;
+            }
+
+            .table-responsive table {
+                font-size: 0.9em;
+            }
+
+            .table-responsive th,
+            .table-responsive td {
+                padding: 8px 10px;
+            }
+
+            .export-button-container {
+                text-align: center;
+                margin-top: 20px;
+            }
+
+            .position-specifics-container {
+                padding-left: 5px;
+            }
+
+            label.category-label {
+                font-size: 0.9em;
+                padding: 6px 12px;
+            }
+
+            #correlation-chart {
+                height: 450px;
+                min-height: 350px;
+            }
+
+            .chart-container {
+                padding: 5px;
+                margin: 10px auto;
+            }
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 600px;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        #players-table th:first-child,
+        #players-table td:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+        }
+
+        #players-table thead th {
+            position: sticky;
+            top: 0;
+            background-color: var(--header-bg);
+            z-index: 3;
+        }
+
+        #players-table thead th:first-child {
+            z-index: 4;
+
+        }
+
+        #players-table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        #players-table tbody td {
+            background-color: var(--card-bg);
+        }
+
+        #players-table tbody tr:nth-child(odd) td {
+            background-color: var(--light-bg);
+        }
+
+        #players-table tbody tr:hover td {
+            background-color: #f1f1f1;
+        }
+
+        #players-table tbody td:not(:first-child) {
+            background-color: var(--card-bg);
+        }
+
+        #players-table tbody tr:nth-child(odd) td:not(:first-child) {
+            background-color: var(--light-bg);
+        }
+
+        #players-table tbody tr:hover td:not(:first-child) {
+            background-color: #f1f1f1;
+        }
+
+        #players-table tbody td:first-child {
+            background-color: var(--card-bg);
+        }
+
+        #players-table tbody tr:nth-child(odd) td:first-child {
+            background-color: var(--light-bg);
+        }
+
+        #players-table tbody tr:hover td:first-child {
+            background-color: #f1f1f1;
+        }
+
+
+        #players-table thead th {
+            position: sticky;
+            top: 0;
+            background-color: var(--header-bg);
+            z-index: 3;
+        }
+
+        #players-table thead th:first-child {
+            z-index: 4;
+        }
+
+
+        #correlation-chart {
+            width: 100%;
+            height: 800px;
+        }
+
+        @media (max-width: 768px) {
+            #correlation-chart {
+                height: 550px;
+                min-height: 400px;
+            }
+
+            .chart-container {
+                padding: 10px;
+                margin: 15px auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #correlation-chart {
+                height: 450px;
+                min-height: 350px;
+            }
+
+            .chart-container {
+                padding: 5px;
+                margin: 10px auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-title {
+                flex-grow: 0;
+                margin-right: auto;
+            }
+
+            .nav-toggle {
+                display: block;
+                margin-left: 10px;
+            }
+        }
+    </style>
+    <script>
+    });
+});
+</script>
+</head>
+<body>
+    <nav class="nav-bar">
+        <div class="nav-title">Euro Simulátor</div>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+            &#9776; 
+        </button>
+        <div class="nav-links" id="navLinks"> 
+            <a href="{{ url_for('index') }}" class="{{ 'active' if active_page == 'index' }}">Hlavní stránka</a>
+            <a href="{{ url_for('simulation_results') }}" class="{{ 'active' if active_page == 'simulation' }}">Výsledky Simulace</a>
+            <a href="{{ url_for('descriptive_analysis') }}" class="{{ 'active' if active_page == 'analysis' }}">Týmová Analýza</a>
+            <a href="{{ url_for('player_comparison') }}" class="{{ 'active' if active_page == 'comparison' }}">Porovnání Hráčů</a>
+            <a href="{{ url_for('attribute_distributions') }}" class="{{ 'active' if active_page == 'distributions' }}">Distribuce Atributů</a>
+            <a href="{{ url_for('correlation_analysis') }}" class="active">Korelační Analýza</a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1>{{ title }}</h1>
+        
+        <div class="card mb-4">
+    <form id="correlation-form" method="GET" action="{{ url_for('correlation_analysis') }}">
+        <div class="filter-form">
+            <div class="form-section">
+                <label>Typ grafu:</label>
+                <div class="radio-group">
+                    <input type="radio" class="btn-check" name="chart_type" id="chart_type_heatmap" value="heatmap" 
+                          {% if chart_type == 'heatmap' %}checked{% endif %}>
+                    <label class="radio-label" for="chart_type_heatmap">Korelační matice</label>
+                    
+                    <input type="radio" class="btn-check" name="chart_type" id="chart_type_scatter" value="scatter" 
+                          {% if chart_type == 'scatter' %}checked{% endif %}>
+                    <label class="radio-label" for="chart_type_scatter">Bodový graf</label>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <label>Rozsah hráčů:</label>
+                <div class="radio-group">
+                    <input type="radio" class="btn-check" name="scope" id="scope_all" value="all" 
+                          {% if scope == 'all' %}checked{% endif %}>
+                    <label class="radio-label" for="scope_all">Všichni hráči</label>
+                    
+                    <input type="radio" class="btn-check" name="scope" id="scope_squad" value="squad" 
+                          {% if scope == 'squad' %}checked{% endif %}>
+                    <label class="radio-label" for="scope_squad">Soupisky</label>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <label for="team">Tým:</label>
+                <select class="form-select" id="team" name="team">
+                    <option value="">-- Všechny týmy --</option>
+                    {% for team in all_teams %}
+                        <option value="{{ team }}" {% if team == selected_team %}selected{% endif %}>
+                            {% if get_flag_emoji %}{{ get_flag_emoji(team) }} {% endif %}{{ team }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        
+        <div class="filter-form position-attribute-row" style="margin-top: 20px;">
+            <div class="form-section">
+                <label>Pozice:</label>
+                
+                {% for category, positions in position_categories.items() %}
+                <div class="position-integrated-row">
+                    <div class="position-category-header">
+                        <input class="position-category-checkbox" type="checkbox" name="position_category" 
+                               id="category_{{ category }}" value="{{ category }}"
+                               {% if category in selected_position_categories %}checked{% endif %}>
+                        <label class="category-label" for="category_{{ category }}">{{ category }}</label>
+                    </div>
+                    
+                    <div class="position-specifics-container">
+                        <div class="checkbox-group">
+                            {% for position in all_positions %}
+                                {% if position in positions %}
+                                    <input class="specific-position-checkbox" type="checkbox" name="position_filter" 
+                                        id="position_{{ position|replace(' ', '_')|replace('-', '_') }}" value="{{ position }}"
+                                        {% if position in selected_positions %}checked{% endif %}>
+                                    <label for="position_{{ position|replace(' ', '_')|replace('-', '_') }}">{{ position }}</label>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="form-section">
+                <div id="attributes-content" {% if chart_type == 'scatter' %}style="display: none;"{% endif %}>
+                    <label>Atributy pro korelaci:</label>
+                    <div class="selection-buttons">
+                        <button type="button" class="btn btn-sm btn-secondary" id="selectAllAttributes">Vybrat vše</button>
+                        <button type="button" class="btn btn-sm btn-secondary" id="deselectAllAttributes">Zrušit výběr</button>
+                    </div>
+                    
+                    {% for group, attrs in attributes_by_group.items() %}
+                    <div class="position-integrated-row">
+                        <div class="position-category-header">
+                            <input class="attribute-category-checkbox" type="checkbox" name="attribute_category" 
+                                   id="attr_category_{{ group|replace(' ', '_')|lower }}" value="{{ group }}">
+                            <label class="category-label" for="attr_category_{{ group|replace(' ', '_')|lower }}">{{ group }}</label>
+                        </div>
+                        
+                        <div class="position-specifics-container">
+                            <div class="checkbox-group">
+                                {% for attr in attrs %}
+                                <input type="checkbox" name="attributes" id="attr_{{ attr }}" value="{{ attr }}"
+                                       class="attribute-checkbox" {% if attr in selected_attributes %}checked{% endif %}>
+                                <label for="attr_{{ attr }}">{{ attr.replace('_', ' ').title() }}</label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    <small class="form-text text-muted d-block mt-2">Pro korelační matici vyberte alespoň 2 atributy.
+                    Je-li ponecháno prázdné, zobrazí se všechny atributy.</small>
+                </div>
+
+                <div id="scatter-options" {% if chart_type != 'scatter' %}style="display: none;"{% endif %}>
+                    <label for="x_attribute">X-ová osa:</label>
+                    <select id="x_attribute" name="x_attribute">
+                        <option value="">-- Vyberte atribut --</option>
+                        {% for group, attrs in attributes_by_group.items() %}
+                            <optgroup label="{{ group }}">
+                                {% for attr in attrs %}
+                                    <option value="{{ attr }}" {% if attr == x_attribute %}selected{% endif %}>
+                                        {{ attr.replace('_', ' ').title() }}
+                                    </option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endfor %}
+                    </select>
+
+                    <label for="y_attribute">Y-ová osa:</label>
+                    <select id="y_attribute" name="y_attribute">
+                        <option value="">-- Vyberte atribut --</option>
+                        {% for group, attrs in attributes_by_group.items() %}
+                            <optgroup label="{{ group }}">
+                                {% for attr in attrs %}
+                                    <option value="{{ attr }}" {% if attr == y_attribute %}selected{% endif %}>
+                                        {{ attr.replace('_', ' ').title() }}
+                                    </option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div> 
+
+        <div class="submit-container">
+            <button type="submit" class="btn btn-primary">Zobrazit korelaci</button>
+            <button type="button" class="btn btn-secondary" id="resetFilters">Resetovat filtry</button>
+        </div>
+    </form>
+</div>
+        
+        {% if correlation_matrix_json %}
+        <div class="card mb-4">
+            <h2>Výsledky korelační analýzy 
+                {% if selected_players|length > 0 %}
+                <span class="badge" style="background-color: var(--primary-color); color: white; font-size: 0.7em; padding: 5px 10px; border-radius: 20px; vertical-align: middle;">{{ selected_players|length }} hráčů</span>
+                {% endif %}
+            </h2>
+            
+            <div class="chart-container">
+                <div id="correlation-chart" style="width: 100%; height: 800px;"></div>
+                
+                <div id="chart-debug" class="error-message" style="display:none;">
+                    <p>Diagnostics for chart rendering:</p>
+                    <pre id="debug-info"></pre>
+                </div>
+            </div>
+            
+            {% if chart_type == 'heatmap' and attr_stats and selected_attributes|length > 0 %}
+            <h3>Statistiky atributů</h3>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Atribut</th>
+                            <th>Průměr</th>
+                            <th>Minimum</th>
+                            <th>Maximum</th>
+                            <th>Počet hodnot</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for attr in selected_attributes %}
+                            {% if attr in attr_stats %}
+                            <tr>
+                                <td>{{ attr.replace('_', ' ').title() }}</td>
+                                <td class="center">{{ attr_stats[attr].mean }}</td>
+                                <td class="center">{{ attr_stats[attr].min }}</td>
+                                <td class="center">{{ attr_stats[attr].max }}</td>
+                                <td class="center">{{ attr_stats[attr].count }}</td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+            
+                        <h3>Interpretace korelace</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                            <div class="correlation-interpretations">
+                                <ul class="list-group" style="list-style-type: none; padding: 0;">
+                                    <li style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color); background-color: var(--light-bg);">
+                                        <span>1.0 Perfektní pozitivní korelace</span>
+                                        <span style="background-color: var(--danger-color); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8em;">Perfektní</span>
+                                    </li>
+                                    <li style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color);">
+                                        <span>0.7 - 0.9 Silná pozitivní korelace</span>
+                                        <span style="background-color: var(--danger-color); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8em;">Silná</span>
+                                    </li>
+                                    <li style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color); background-color: var(--light-bg);">
+                                        <span>0.4 - 0.6 Střední pozitivní korelace</span>
+                                        <span style="background-color: var(--stat-min); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8em;">Střední</span>
+                                    </li>
+                                    <li style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color);">
+                                        <span>0.1 - 0.3 Slabá pozitivní korelace</span>
+                                        <span style="background-color: var(--stat-max); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8em;">Slabá</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="correlation-interpretations">
+                                <ul class="list-group" style="list-style-type: none; padding: 0;">
+                                    <li style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color); background-color: var(--light-bg);">
+                                        <span>0 Žádná korelace</span>
+                                        <span style="background-color: var(--secondary-color); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8em;">Žádná</span>
+                                    </li>
+                                    <li style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color);">
+                                        <span>-0.1 - -0.3 Slabá negativní korelace</span>
+                                        <span style="background-color: var(--stat-max); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8em;">Slabá</span>
+                                    </li>
+                                    <li style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color); background-color: var(--light-bg);">
+                                        <span>-0.4 - -0.6 Střední negativní korelace</span>
+                                        <span style="background-color: var(--stat-min); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8em;">Střední</span>
+                                    </li>
+                                    <li style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color);">
+                                        <span>-0.7 - -1.0 Silná negativní korelace</span>
+                                        <span style="background-color: var(--danger-color); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8em;">Silná</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+        
+        {% if selected_players|length > 0 %}
+        <div class="card mb-4">
+            <h2>Seznam vybraných hráčů ({{ selected_players|length }})</h2>
+            <button id="toggleColumns" class="btn btn-sm btn-secondary" style="margin-bottom: 15px; width: auto; align-self: flex-end;">Zobrazit/skrýt sloupce</button>
+            
+            <div class="table-responsive">
+                <table id="players-table">
+                    <thead>
+                        <tr>
+                            <th class="always-visible">Jméno hráče</th>
+                            <th class="always-visible">Národnost</th>
+                            <th class="always-visible">Pozice</th>
+                            {% for attr in selected_attributes %}
+                                <th class="toggle-column">{{ attr.replace('_', ' ').title() }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for player in selected_players %}
+                        <tr>
+                            <td>{{ player.player_name }}</td>
+                            <td>
+                                {% if get_flag_emoji %}
+                                    {{ get_flag_emoji(player.nationality) }} 
+                                {% endif %}
+                                {{ player.nationality }}
+                            </td>
+                            <td>{{ player.position }}</td>
+                            {% for attr in selected_attributes %}
+                                <td class="toggle-column">{{ player[attr] }}</td>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div> 
+
+    <script>
+        window.validateForm = function() {
+            console.log("Validating form...");
+            const submitButton = document.querySelector('button[type="submit"]');
+            const chartTypeInput = document.querySelector('input[name="chart_type"]:checked');
+            const chartType = chartTypeInput ? chartTypeInput.value : null;
+
+            if (!submitButton) {
+                console.error("Submit button not found!");
+                return;
+            }
+             if (!chartType) {
+                 console.error("Chart type not selected!");
+                 submitButton.disabled = true;
+                 submitButton.classList.add('btn-secondary');
+                 submitButton.classList.remove('btn-primary');
+                 submitButton.title = 'Vyberte typ grafu';
+                 return;
+             }
+
+
+            let isValid = false;
+            if (chartType === 'scatter') {
+                const xAttr = document.getElementById('x_attribute')?.value;
+                const yAttr = document.getElementById('y_attribute')?.value;
+                console.log("Scatter selected. X:", xAttr, "Y:", yAttr);
+                isValid = xAttr && yAttr;
+                submitButton.title = isValid ? '' : 'Pro bodový graf vyberte atributy pro obě osy (X a Y)';
+
+            } else if (chartType === 'heatmap') {
+                const selectedAttributesCount = document.querySelectorAll('input[name="attributes"]:checked').length;
+                console.log(`Heatmap selected. Attributes count: ${selectedAttributesCount}`);
+                isValid = selectedAttributesCount !== 1; 
+                if (isValid) {
+                    submitButton.title = selectedAttributesCount === 0 ? 'Zobrazí všechny atributy, pokud nejsou žádné vybrány' : '';
+                } else { 
+                    submitButton.title = 'Pro korelační matici vyberte alespoň 2 atributy nebo žádné (pro všechny)';
+                }
+            }
+
+            submitButton.disabled = !isValid;
+             if (isValid) {
+                 submitButton.classList.remove('btn-secondary');
+                 submitButton.classList.add('btn-primary');
+             } else {
+                 submitButton.classList.add('btn-secondary');
+                 submitButton.classList.remove('btn-primary');
+             }
+            console.log("Submit button disabled state:", submitButton.disabled);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOM fully loaded - initializing consolidated script...");
+
+            const form = document.getElementById('correlation-form');
+            const chartTypeRadios = document.querySelectorAll('input[name="chart_type"]');
+            const scatterOptions = document.getElementById('scatter-options');
+            const attributesContent = document.getElementById('attributes-content');
+            const positionCategoryCheckboxes = document.querySelectorAll('input.position-category-checkbox');
+            const specificPositionCheckboxes = document.querySelectorAll('input[name="position_filter"]');
+            const attributeCategoryCheckboxes = document.querySelectorAll('input.attribute-category-checkbox');
+            const attributeCheckboxes = document.querySelectorAll('input[name="attributes"]');
+            const xAttributeSelect = document.getElementById('x_attribute');
+            const yAttributeSelect = document.getElementById('y_attribute');
+            const selectAllAttributesBtn = document.getElementById('selectAllAttributes');
+            const deselectAllAttributesBtn = document.getElementById('deselectAllAttributes');
+            const resetFiltersBtn = document.getElementById('resetFilters');
+            const toggleColumnsBtn = document.getElementById('toggleColumns');
+            const playersTable = document.getElementById('players-table');
+            const chartContainer = document.getElementById('correlation-chart');
+            const chartDebugContainer = document.getElementById('chart-debug');
+            const debugInfoPre = document.getElementById('debug-info');
+            const navBar = document.querySelector('.nav-bar');
+            const navToggle = document.getElementById('navToggle'); 
+            const navLinks = document.getElementById('navLinks'); 
+
+
+            const attributesByCategory = {};
+            {% for group, attrs in attributes_by_group.items() %}
+                attributesByCategory["{{ group }}"] = [{% for attr in attrs %}"{{ attr }}"{% if not loop.last %}, {% endif %}{% endfor %}];
+            {% endfor %}
+
+            const positionMapping = {
+                 {% for category, positions in position_categories.items() %}
+                 "{{ category }}": [{% for position in positions %}"{{ position }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+                 {% endfor %}
+             };
+
+
+            function syncAttributeCategoryCheckboxes() {
+                attributeCategoryCheckboxes.forEach(categoryCheckbox => {
+                    const category = categoryCheckbox.value;
+                    const label = categoryCheckbox.nextElementSibling; 
+                    const attributesInGroup = attributesByCategory[category] || [];
+
+                    if (!label) return; 
+
+                    label.classList.remove('category-label-checked', 'category-label-indeterminate');
+
+                    if (attributesInGroup.length === 0) {
+                        categoryCheckbox.checked = false;
+                        categoryCheckbox.indeterminate = false; 
+                        return;
+                    }
+
+                    let checkedCount = 0;
+                    attributesInGroup.forEach(attr => {
+                        const checkbox = document.querySelector(`input[name="attributes"][value="${attr}"]`);
+                        if (checkbox && checkbox.checked) {
+                            checkedCount++;
+                        }
+                    });
+
+                    const allChecked = checkedCount === attributesInGroup.length;
+                    const noneChecked = checkedCount === 0;
+
+                    categoryCheckbox.checked = allChecked;
+                    categoryCheckbox.indeterminate = !allChecked && !noneChecked;
+
+                    if (allChecked) {
+                        label.classList.add('category-label-checked');
+                    } else if (!noneChecked) { 
+                        label.classList.add('category-label-indeterminate');
+                    }
+                });
+            }
+
+            function syncPositionCategoryCheckboxes() {
+                positionCategoryCheckboxes.forEach(categoryCheckbox => {
+                    const category = categoryCheckbox.value;
+                    const label = categoryCheckbox.nextElementSibling; 
+                    const specificPositions = positionMapping[category] || [];
+                    console.log(`[Sync Positions] Checking category: ${category}`);
+
+                    if (!label) {
+                        console.warn(`[Sync Positions] Label not found for category: ${category}`);
+                        return; 
+                    }
+
+                    label.classList.remove('category-label-checked', 'category-label-indeterminate');
+
+                    if (specificPositions.length === 0) {
+                        categoryCheckbox.checked = false;
+                        categoryCheckbox.indeterminate = false; 
+                        return;
+                    }
+
+                    let selectedCount = 0;
+                    let totalPositions = 0;
+                    
+                    specificPositions.forEach(position => {
+                        const checkbox = document.querySelector(`input[name="position_filter"][value="${position}"]`);
+                        if (checkbox) {
+                            totalPositions++;
+                            if (checkbox.checked) {
+                                selectedCount++;
+                            }
+                        }
+                    });
+
+                    console.log(`[Sync Positions] Category ${category}: Selected ${selectedCount}/${totalPositions}`);
+
+                    const allSelected = selectedCount === totalPositions && totalPositions > 0;
+                    const noneSelected = selectedCount === 0;
+
+                    categoryCheckbox.checked = allSelected;
+                    categoryCheckbox.indeterminate = !allSelected && !noneSelected;
+
+                    if (allSelected) {
+                        label.classList.add('category-label-checked');
+                        console.log(`[Sync Positions] Category ${category}: All selected, applying category-label-checked`);
+                    } else if (!noneSelected) { 
+                        label.classList.add('category-label-indeterminate');
+                        console.log(`[Sync Positions] Category ${category}: Partially selected, applying category-label-indeterminate`);
+                    }
+                });
+            }
+
+            function updateAttributesBasedOnPositions() {
+                 const selectedPositions = Array.from(specificPositionCheckboxes)
+                     .filter(cb => cb.checked)
+                     .map(cb => cb.value);
+
+                 const hasGoalkeeper = selectedPositions.some(pos => pos === 'Goalkeeper' || pos === 'GK');
+                 const hasOutfield = selectedPositions.some(pos => pos !== 'Goalkeeper' && pos !== 'GK');
+
+                 const goalkeeperAttrs = attributesByCategory['Goalkeeping'] || [];
+                 const allAttributeValues = Object.values(attributesByCategory).flat();
+                 const nonGoalkeeperAttrs = allAttributeValues.filter(attr => !goalkeeperAttrs.includes(attr));
+
+                 syncAttributeCategoryCheckboxes();
+                 validateForm();
+             }
+
+            function updateChartTypeVisibility(chartType) {
+                console.log(`Updating visibility for chart type: ${chartType}`);
+                const isScatter = chartType === 'scatter';
+
+                if (scatterOptions) {
+                    scatterOptions.style.display = isScatter ? 'block' : 'none';
+                    console.log(`Scatter options display set to: ${scatterOptions.style.display}`);
+                } else {
+                     console.error("Scatter options element not found!");
+                }
+
+                if (attributesContent) {
+                    attributesContent.style.display = isScatter ? 'none' : 'block';
+                    console.log(`Attributes content display set to: ${attributesContent.style.display}`);
+                } else {
+                    console.error("Attributes content element not found!");
+                }
+            }
+
+
+            if (navToggle && navLinks) {
+                navToggle.addEventListener('click', () => {
+                    navLinks.classList.toggle('active'); 
+                });
+            } else {
+                console.error("Navbar toggle or links container not found!");
+            }
+
+            chartTypeRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    updateChartTypeVisibility(this.value);
+                    validateForm();
+                });
+            });
+
+            attributeCategoryCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const category = this.value;
+                    const isChecked = this.checked;
+                    const attributesInGroup = attributesByCategory[category] || [];
+
+                    attributesInGroup.forEach(attr => {
+                        const attrCheckbox = document.querySelector(`input[name="attributes"][value="${attr}"]`);
+                        if (attrCheckbox) {
+                            attrCheckbox.checked = isChecked;
+                        }
+                    });
+                    syncAttributeCategoryCheckboxes();
+                    validateForm();
+                });
+            });
+
+            attributeCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    syncAttributeCategoryCheckboxes(); 
+                    validateForm(); 
+                });
+            });
+
+             positionCategoryCheckboxes.forEach(categoryCheckbox => {
+                 categoryCheckbox.addEventListener('change', function() {
+                     const category = this.value;
+                     const isChecked = this.checked;
+                     const specificPositions = positionMapping[category] || [];
+                     console.log(`[Category Change] Category: ${category}, New State: ${isChecked}`);
+
+                     specificPositions.forEach(position => {
+                         const positionCheckbox = document.querySelector(`input[name="position_filter"][value="${position}"]`);
+                         if (positionCheckbox) {
+                             console.log(`  Setting position ${position} to ${isChecked}`);
+                             positionCheckbox.checked = isChecked;
+                         }
+                     });
+
+                     const label = this.nextElementSibling;
+                     if (label) {
+                         label.classList.remove('category-label-checked', 'category-label-indeterminate');
+                         
+                         if (isChecked) {
+                             console.log(`  Setting category ${category} label to checked`);
+                             label.classList.add('category-label-checked');
+                         }
+                     }
+
+                     updateAttributesBasedOnPositions();
+                 });
+             });
+
+             specificPositionCheckboxes.forEach(checkbox => {
+                 checkbox.addEventListener('change', () => {
+                     console.log(`[Specific Change] ${checkbox.value} changed. Calling syncPositionCategoryCheckboxes.`);
+                     syncPositionCategoryCheckboxes(); 
+                     
+                     console.log(`[Specific Change] ${checkbox.value} changed. Calling updateAttributesBasedOnPositions.`);
+                     updateAttributesBasedOnPositions(); 
+                 });
+             });
+
+            if (xAttributeSelect) xAttributeSelect.addEventListener('change', validateForm);
+            if (yAttributeSelect) yAttributeSelect.addEventListener('change', validateForm);
+
+            if (selectAllAttributesBtn) {
+                selectAllAttributesBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    attributeCheckboxes.forEach(cb => { cb.checked = true; });
+                    syncAttributeCategoryCheckboxes(); 
+                    validateForm();
+                });
+            }
+            if (deselectAllAttributesBtn) {
+                deselectAllAttributesBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    attributeCheckboxes.forEach(cb => { cb.checked = false; });
+                    syncAttributeCategoryCheckboxes(); 
+                    validateForm();
+                });
+            }
+
+            if (resetFiltersBtn) {
+                resetFiltersBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log("Resetting filters...");
+
+                    if (form) {
+                        const currentChartTypeInput = document.querySelector('input[name="chart_type"]:checked');
+                        const chartTypeToRestore = currentChartTypeInput ? currentChartTypeInput.value : 'heatmap';
+                        console.log("Chart type to restore after reset:", chartTypeToRestore);
+
+                        form.reset();
+
+                        window.history.replaceState({}, '', window.location.pathname);
+
+                        const heatmapRadio = document.getElementById('chart_type_heatmap');
+                        const scatterRadio = document.getElementById('chart_type_scatter');
+                        const scopeAllRadio = document.getElementById('scope_all');
+                        const teamSelect = document.getElementById('team');
+
+                        if (heatmapRadio) heatmapRadio.checked = (chartTypeToRestore === 'heatmap');
+                        if (scatterRadio) scatterRadio.checked = (chartTypeToRestore === 'scatter');
+                        if (scopeAllRadio) scopeAllRadio.checked = true; 
+                        if (teamSelect) teamSelect.value = ''; 
+
+                        positionCategoryCheckboxes.forEach(cb => cb.checked = false);
+                        specificPositionCheckboxes.forEach(cb => cb.checked = false);
+                        attributeCategoryCheckboxes.forEach(cb => cb.checked = false);
+                        attributeCheckboxes.forEach(cb => cb.checked = false);
+                        if (xAttributeSelect) xAttributeSelect.value = '';
+                        if (yAttributeSelect) yAttributeSelect.value = '';
+
+                        updateChartTypeVisibility(chartTypeToRestore); 
+                        syncAttributeCategoryCheckboxes();
+                        syncPositionCategoryCheckboxes();
+                        validateForm();
+
+                        console.log("Filters reset complete. Restored chart type:", chartTypeToRestore);
+                    }
+                });
+            }
+
+
+            if (toggleColumnsBtn) {
+                toggleColumnsBtn.addEventListener('click', () => {
+                    const toggleColumns = document.querySelectorAll('.toggle-column');
+                    if (toggleColumns.length > 0) {
+                        const firstCol = toggleColumns[0];
+                        const isHidden = firstCol.style.display === 'none' || getComputedStyle(firstCol).display === 'none';
+                        const newDisplay = isHidden ? '' : 'none';
+                        console.log(`Toggling columns to display: '${newDisplay}'`);
+                        toggleColumns.forEach(column => {
+                            column.style.display = newDisplay;
+                        });
+                    }
+                });
+            }
+
+            if (form) {
+                form.addEventListener('submit', function(event) {
+                    console.log("Form submit event triggered.");
+                    const chartTypeInput = document.querySelector('input[name="chart_type"]:checked');
+                    const chartType = chartTypeInput ? chartTypeInput.value : null;
+
+                    let preventSubmit = false;
+                    let alertMsg = '';
+
+                    if (!chartType) {
+                         preventSubmit = true;
+                         alertMsg = 'Vyberte typ grafu.';
+                    } else if (chartType === 'scatter') {
+                        const xAttr = xAttributeSelect?.value;
+                        const yAttr = yAttributeSelect?.value;
+                        if (!xAttr || !yAttr) {
+                            preventSubmit = true;
+                            alertMsg = 'Pro bodový graf musíte vybrat atributy pro obě osy (X a Y)';
+                        }
+                    } else if (chartType === 'heatmap') {
+                        const selectedAttributesCount = document.querySelectorAll('input[name="attributes"]:checked').length;
+                        if (selectedAttributesCount === 1) {
+                            preventSubmit = true;
+                            alertMsg = 'Pro korelační matici vyberte alespoň 2 atributy nebo žádné (pro všechny).';
+                        }
+                    }
+
+                    if (preventSubmit) {
+                        console.log("Form submission PREVENTED. Reason:", alertMsg);
+                        alert(alertMsg);
+                        event.preventDefault(); 
+                    } else {
+                        console.log("Form submission ALLOWED.");
+                    }
+                });
+            } else {
+                console.error("Form element #correlation-form not found!");
+            }
+
+            const initialChartType = document.querySelector('input[name="chart_type"]:checked')?.value || 'heatmap';
+            updateChartTypeVisibility(initialChartType);
+            syncAttributeCategoryCheckboxes(); 
+            syncPositionCategoryCheckboxes(); 
+            validateForm(); 
+
+            {% if correlation_matrix_json %}
+                console.log("Chart data JSON exists. Attempting render...");
+                try {
+                    if (!chartContainer) {
+                        throw new Error("Chart container #correlation-chart not found!");
+                    }
+                    const chartData = {{ correlation_matrix_json|safe }};
+                    if (!chartData || !chartData.data || !chartData.layout) {
+                         throw new Error("Chart data structure is invalid.");
+                    }
+
+                    const mobileMaxWidth = 768;
+                    if (window.innerWidth <= mobileMaxWidth) {
+                        console.log("Adjusting Plotly layout for mobile.");
+                        if (chartData.layout.xaxis && chartData.layout.xaxis.tickfont) {
+                            chartData.layout.xaxis.tickfont.size = 7; 
+                        } else if (chartData.layout.xaxis) {
+                            chartData.layout.xaxis.tickfont = { size: 7 };
+                        } else {
+                             chartData.layout.xaxis = { tickfont: { size: 7 } };
+                        }
+
+                        if (chartData.layout.yaxis && chartData.layout.yaxis.tickfont) {
+                            chartData.layout.yaxis.tickfont.size = 7; 
+                        } else if (chartData.layout.yaxis) {
+                            chartData.layout.yaxis.tickfont = { size: 7 };
+                        } else {
+                             chartData.layout.yaxis = { tickfont: { size: 7 } };
+                        }
+
+                        if (!chartData.layout.margin) chartData.layout.margin = {};
+                        chartData.layout.margin.l = 55; 
+                        chartData.layout.margin.b = 55; 
+                        chartData.layout.margin.t = 30; 
+                        chartData.layout.margin.r = 10; 
+
+                        if (chartData.data[0] && chartData.data[0].colorbar) {
+                        }
+                    }
+
+
+                    console.log("Chart data parsed:", "Data points:", chartData.data[0]?.z?.length, "Layout title:", chartData.layout?.title);
+
+                    Plotly.newPlot(chartContainer, chartData.data, chartData.layout, {responsive: true})
+                        .then(() => console.log("Chart rendered successfully."))
+                        .catch(error => {
+                            console.error("Plotly rendering error:", error);
+                            if (chartDebugContainer && debugInfoPre) {
+                                chartDebugContainer.style.display = "block";
+                                debugInfoPre.textContent = "Plotly rendering error: " + error.message;
+                            }
+                        });
+
+                    window.addEventListener('resize', () => {
+                         if (chartContainer) {
+                             Plotly.Plots.resize(chartContainer);
+                         }
+                     });
+
+                } catch (e) {
+                    console.error("Error processing or rendering chart data:", e);
+                    if (chartDebugContainer && debugInfoPre) {
+                        chartDebugContainer.style.display = "block";
+                        debugInfoPre.textContent = "JS Error: " + e.message + "\nData type: " + (typeof {{ correlation_matrix_json|safe }});
+                    }
+                }
+            {% else %}
+                console.log("No chart data available.");
+                if (chartContainer) {
+                    chartContainer.innerHTML = '<div class="info-message">Není k dispozici žádný graf. Vyberte atributy a filtrujte data.</div>';
+                }
+            {% endif %}
+
+            let lastScrollTop = 0;
+            const mobileMaxWidthNav = 768; 
+            const scrollThresholdNav = 5; 
+            if (navBar) {
+                window.addEventListener('scroll', function() {
+                    if (window.innerWidth <= mobileMaxWidthNav && !navLinks.classList.contains('active')) {
+                        let currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                        if (currentScrollTop > lastScrollTop && currentScrollTop > navBar.offsetHeight) {
+                            if (Math.abs(lastScrollTop - currentScrollTop) > scrollThresholdNav) {
+                                navBar.classList.add('nav-hidden');
+                            }
+                        } else {
+                            navBar.classList.remove('nav-hidden');
+                        }
+                        lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop; 
+                    } else {
+                        navBar.classList.remove('nav-hidden');
+                    }
+                }, false);
+            }
+
+            console.log("Consolidated script initialization complete.");
+        });
+    </script>
+
+</body>
+</html>
