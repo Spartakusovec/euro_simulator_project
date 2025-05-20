@@ -9,24 +9,200 @@
     <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
     <style>
         :root {
-            --primary-color: #007bff;
-            --primary-hover: #0056b3;
-            --secondary-color: #6c757d;
-            --secondary-hover: #5a6268;
-            --light-bg: #f8f9fa;
-            --border-color: #dee2e6;
-            --text-color: #343a40;
-            --text-muted: #6c757d;
-            --card-bg: #ffffff;
-            --header-bg: #e9ecef;
-            --success-color: #28a745;
-            --danger-color: #dc3545;
-            --stat-better: #28a745;
-            --stat-worse: #dc3545;
-            --stat-max: #17a2b8;
-            --stat-min: #ffc107;
-            --link-color: #007bff;
-            --link-hover: #0056b3;
+            /* Light Theme Variables */
+            --primary-color-light: #007bff;
+            --primary-hover-light: #0056b3;
+            --secondary-color-light: #6c757d;
+            --secondary-hover-light: #5a6268;
+            --light-bg-light: #f8f9fa; 
+            --body-bg-light: #f4f4f4; 
+            --border-color-light: #dee2e6;
+            --text-color-light: #343a40;
+            --text-muted-light: #6c757d;
+            --card-bg-light: #ffffff;
+            --header-bg-light: #e9ecef;
+            --success-color-light: #28a745;
+            --danger-color-light: #dc3545;
+            --danger-hover-light: #c82333;
+            --stat-better-light: #28a745;
+            --stat-worse-light: #dc3545;
+            --stat-max-light: #17a2b8; 
+            --stat-min-light: #ffc107; 
+            --link-color-light: #007bff;
+            --link-hover-light: #0056b3;
+            --nav-bar-bg-light: #ffffff;
+            --select-arrow-color-light: '%236c757d'; 
+            --table-hover-bg-light: #f1f1f1;
+            --details-border-light: #aaa;
+            --details-content-border-light: #eee;
+            --carousel-bg-light: #fdfdfd;
+            --carousel-header-text-light: #555;
+            --carousel-slide-text-light: #333;
+            --carousel-nav-disabled-bg-light: #ccc;
+            --group-overview-item-bg-light: #fff;
+            --group-overview-item-border-light: #e0e0e0;
+            --group-teams-table-header-text-light: #444;
+            --group-teams-table-row-border-light: #f0f0f0;
+            --th-sortable-hover-bg-light: #dde2e6;
+            --th-sortable-arrow-color-light: #333;
+            --qualifier-bg-light: #d4edda;
+            --checkbox-hover-bg-light: #e9ecef;
+            --checkbox-hover-border-light: #adb5bd;
+            --button-disabled-bg-light: #ccc; 
+            --button-disabled-border-light: #bbb;
+            --button-disabled-text-light: #888;
+            --category-label-indeterminate-bg-light: #daf0FF;
+            --attribute-group-border-light: #ddd;
+            --box-shadow-light: rgba(0, 0, 0, 0.05);
+            --scope-toggle-hover-bg-light: #e9ecef;
+            --scope-toggle-hover-border-light: #adb5bd;
+
+
+            /* Dark Theme Variables */
+            --primary-color-dark: #0d6efd;
+            --primary-hover-dark: #3385fd;
+            --secondary-color-dark: #5c636a;
+            --secondary-hover-dark: #494f54;
+            --light-bg-dark: #22272e; 
+            --body-bg-dark: #1c2128;  
+            --border-color-dark: #444c56;
+            --text-color-dark: #adbac7;
+            --text-muted-dark: #768390;
+            --card-bg-dark: #2d333b;
+            --header-bg-dark: #373e47;
+            --success-color-dark: #34c356; 
+            --danger-color-dark: #f85149;  
+            --danger-hover-dark: #fa3d35;
+            --stat-better-dark: #34c356;
+            --stat-worse-dark: #f85149;
+            --stat-max-dark: #2cbce0; 
+            --stat-min-dark: #ffca2c; 
+            --link-color-dark: #2c8cff;
+            --link-hover-dark: #57a3ff;
+            --nav-bar-bg-dark: #2d333b;
+            --select-arrow-color-dark: '%23adbac7'; 
+            --table-hover-bg-dark: #373e47;
+            --details-border-dark: #555c66;
+            --details-content-border-dark: #444c56;
+            --carousel-bg-dark: #282e36;
+            --carousel-header-text-dark: #aab5c1;
+            --carousel-slide-text-dark: #adbac7;
+            --carousel-nav-disabled-bg-dark: #444c56;
+            --group-overview-item-bg-dark: #2d333b;
+            --group-overview-item-border-dark: #444c56;
+            --group-teams-table-header-text-dark: #adbac7;
+            --group-teams-table-row-border-dark: #373e47;
+            --th-sortable-hover-bg-dark: #404853;
+            --th-sortable-arrow-color-dark: #adbac7;
+            --qualifier-bg-dark: #2a5a3a !important; 
+            --checkbox-hover-bg-dark: #373e47;
+            --checkbox-hover-border-dark: #5a6268;
+            --button-disabled-bg-dark: #444c56;
+            --button-disabled-border-dark: #555c66;
+            --button-disabled-text-dark: #768390;
+            --category-label-indeterminate-bg-dark: #2a4a6e; 
+            --attribute-group-border-dark: var(--border-color-dark);
+            --box-shadow-dark: rgba(0, 0, 0, 0.25); 
+            --scope-toggle-hover-bg-dark: #373e47;
+            --scope-toggle-hover-border-dark: #5a6268;
+
+
+            /* Default to Light Theme */
+            --primary-color: var(--primary-color-light);
+            --primary-hover: var(--primary-hover-light);
+            --secondary-color: var(--secondary-color-light);
+            --secondary-hover: var(--secondary-hover-light);
+            --light-bg: var(--light-bg-light);
+            --body-bg: var(--body-bg-light);
+            --border-color: var(--border-color-light);
+            --text-color: var(--text-color-light);
+            --text-muted: var(--text-muted-light);
+            --card-bg: var(--card-bg-light);
+            --header-bg: var(--header-bg-light);
+            --success-color: var(--success-color-light);
+            --danger-color: var(--danger-color-light);
+            --danger-hover: var(--danger-hover-light);
+            --stat-better: var(--stat-better-light);
+            --stat-worse: var(--stat-worse-light);
+            --stat-max: var(--stat-max-light);
+            --stat-min: var(--stat-min-light);
+            --link-color: var(--link-color-light);
+            --link-hover: var(--link-hover-light);
+            --nav-bar-bg: var(--nav-bar-bg-light);
+            --select-arrow-color: var(--select-arrow-color-light);
+            --table-hover-bg: var(--table-hover-bg-light);
+            --details-border: var(--details-border-light);
+            --details-content-border: var(--details-content-border-light);
+            --carousel-bg: var(--carousel-bg-light);
+            --carousel-header-text: var(--carousel-header-text-light);
+            --carousel-slide-text: var(--carousel-slide-text-light);
+            --carousel-nav-disabled-bg: var(--carousel-nav-disabled-bg-light);
+            --group-overview-item-bg: var(--group-overview-item-bg-light);
+            --group-overview-item-border: var(--group-overview-item-border-light);
+            --group-teams-table-header-text: var(--group-teams-table-header-text-light);
+            --group-teams-table-row-border: var(--group-teams-table-row-border-light);
+            --th-sortable-hover-bg: var(--th-sortable-hover-bg-light);
+            --th-sortable-arrow-color: var(--th-sortable-arrow-color-light);
+            --qualifier-bg: var(--qualifier-bg-light);
+            --checkbox-hover-bg: var(--checkbox-hover-bg-light);
+            --checkbox-hover-border: var(--checkbox-hover-border-light);
+            --button-disabled-bg: var(--button-disabled-bg-light);
+            --button-disabled-border: var(--button-disabled-border-light);
+            --button-disabled-text: var(--button-disabled-text-light);
+            --category-label-indeterminate-bg: var(--category-label-indeterminate-bg-light);
+            --attribute-group-border: var(--attribute-group-border-light);
+            --box-shadow: var(--box-shadow-light);
+            --scope-toggle-hover-bg: var(--scope-toggle-hover-bg-light);
+            --scope-toggle-hover-border: var(--scope-toggle-hover-border-light);
+        }
+
+        body.dark-mode {
+            --primary-color: var(--primary-color-dark);
+            --primary-hover: var(--primary-hover-dark);
+            --secondary-color: var(--secondary-color-dark);
+            --secondary-hover: var(--secondary-hover-dark);
+            --light-bg: var(--light-bg-dark);
+            --body-bg: var(--body-bg-dark);
+            --border-color: var(--border-color-dark);
+            --text-color: var(--text-color-dark);
+            --text-muted: var(--text-muted-dark);
+            --card-bg: var(--card-bg-dark);
+            --header-bg: var(--header-bg-dark);
+            --success-color: var(--success-color-dark);
+            --danger-color: var(--danger-color-dark);
+            --danger-hover: var(--danger-hover-dark);
+            --stat-better: var(--stat-better-dark);
+            --stat-worse: var(--stat-worse-dark);
+            --stat-max: var(--stat-max-dark);
+            --stat-min: var(--stat-min-dark);
+            --link-color: var(--link-color-dark);
+            --link-hover: var(--link-hover-dark);
+            --nav-bar-bg: var(--nav-bar-bg-dark);
+            --select-arrow-color: var(--select-arrow-color-dark);
+            --table-hover-bg: var(--table-hover-bg-dark);
+            --details-border: var(--details-border-dark);
+            --details-content-border: var(--details-content-border-dark);
+            --carousel-bg: var(--carousel-bg-dark);
+            --carousel-header-text: var(--carousel-header-text-dark);
+            --carousel-slide-text: var(--carousel-slide-text-dark);
+            --carousel-nav-disabled-bg: var(--carousel-nav-disabled-bg-dark);
+            --group-overview-item-bg: var(--group-overview-item-bg-dark);
+            --group-overview-item-border: var(--group-overview-item-border-dark);
+            --group-teams-table-header-text: var(--group-teams-table-header-text-dark);
+            --group-teams-table-row-border: var(--group-teams-table-row-border-dark);
+            --th-sortable-hover-bg: var(--th-sortable-hover-bg-dark);
+            --th-sortable-arrow-color: var(--th-sortable-arrow-color-dark);
+            --qualifier-bg: var(--qualifier-bg-dark);
+            --checkbox-hover-bg: var(--checkbox-hover-bg-dark);
+            --checkbox-hover-border: var(--checkbox-hover-border-dark);
+            --button-disabled-bg: var(--button-disabled-bg-dark);
+            --button-disabled-border: var(--button-disabled-border-dark);
+            --button-disabled-text: var(--button-disabled-text-dark);
+            --category-label-indeterminate-bg: var(--category-label-indeterminate-bg-dark);
+            --attribute-group-border: var(--attribute-group-border-dark);
+            --box-shadow: var(--box-shadow-dark);
+            --scope-toggle-hover-bg: var(--scope-toggle-hover-bg-dark);
+            --scope-toggle-hover-border: var(--scope-toggle-hover-border-dark);
         }
 
         body {
@@ -34,7 +210,7 @@
             margin: 0;
             padding: 20px;
             line-height: 1.6;
-            background-color: #f4f4f4;
+            background-color: var(--body-bg);
             color: var(--text-color);
             position: relative;
             padding-top: 80px;
@@ -46,7 +222,7 @@
             padding: 25px;
             background-color: var(--card-bg);
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 8px var(--box-shadow);
         }
 
         h1,
@@ -101,8 +277,8 @@
             top: 0;
             left: 0;
             right: 0;
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: var(--nav-bar-bg);
+            box-shadow: 0 2px 4px var(--box-shadow);
             z-index: 1000;
             padding: 10px 25px;
             display: flex;
@@ -117,6 +293,21 @@
             font-size: 1.2em;
             color: var(--text-color);
             flex-grow: 1;
+        }
+        
+        #darkModeToggle {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-left: 15px; 
+            order: 3; 
+        }
+        body.dark-mode #darkModeToggle {
+            background-color: var(--primary-color);
         }
 
         .nav-toggle {
@@ -183,6 +374,9 @@
             border-color: var(--primary-color);
             color: white;
         }
+         body.dark-mode .btn-primary, body.dark-mode button.main-submit {
+            color: #fff;
+        }
 
         .btn-primary:hover,
         button.main-submit:hover {
@@ -199,6 +393,10 @@
             border-color: var(--secondary-color);
             color: white;
         }
+        body.dark-mode .btn-secondary, body.dark-mode a.reset-button, body.dark-mode a.back-button {
+            color: #fff;
+        }
+
 
         .btn-secondary:hover,
         a.reset-button:hover,
@@ -218,7 +416,7 @@
             background-color: var(--light-bg);
             padding: 25px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 4px var(--box-shadow);
             margin-bottom: 30px;
             border: 1px solid var(--border-color);
         }
@@ -277,15 +475,21 @@
 
         select {
             appearance: none;
-            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236c757d%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.6-3.6%205.4-7.8%205.4-12.8%200-5-1.8-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22' + var(--select-arrow-color) + '%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.6-3.6%205.4-7.8%205.4-12.8%200-5-1.8-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
             background-repeat: no-repeat;
             background-position: right 12px center;
             background-size: 10px 10px;
             padding-right: 35px;
         }
+         body:not(.dark-mode) select {
+             background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236c757d%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.6-3.6%205.4-7.8%205.4-12.8%200-5-1.8-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
+        }
+        body.dark-mode select {
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23adbac7%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.6-3.6%205.4-7.8%205.4-12.8%200-5-1.8-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
+        }
 
         select:disabled {
-            background-color: #e9ecef;
+            background-color: var(--header-bg); /* Updated */
             cursor: not-allowed;
             opacity: 0.7;
         }
@@ -335,11 +539,15 @@
             color: white;
             border-color: var(--primary-hover);
         }
+         body.dark-mode .checkbox-group input[type="checkbox"]:checked+label,
+         body.dark-mode .radio-group input[type="radio"]:checked+label.radio-label {
+            color: #fff;
+        }
 
         .checkbox-group input[type="checkbox"]:not(:checked)+label:hover,
         .radio-group input[type="radio"]:not(:checked)+label.radio-label:hover {
-            background-color: #e9ecef;
-            border-color: #adb5bd;
+            background-color: var(--checkbox-hover-bg); /* Updated */
+            border-color: var(--checkbox-hover-border); /* Updated */
             color: var(--text-color);
         }
 
@@ -355,7 +563,7 @@
             width: 100%;
             margin: 20px auto 30px auto;
             background-color: var(--card-bg);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.07);
+            box-shadow: 0 2px 5px var(--box-shadow); /* Updated */
             border-radius: 8px;
             overflow: hidden;
             border: 1px solid var(--border-color);
@@ -388,7 +596,7 @@
         }
 
         tbody tr:hover {
-            background-color: #f1f1f1;
+            background-color: var(--table-hover-bg); /* Updated */
         }
 
         td.number,
@@ -407,7 +615,7 @@
         }
 
         th.sortable:hover {
-            background-color: #dde2e6;
+            background-color: var(--th-sortable-hover-bg); /* Updated */
         }
 
         th.sortable::after {
@@ -421,12 +629,12 @@
         }
 
         th.sortable.sort-asc::after {
-            border-bottom-color: #333;
+            border-bottom-color: var(--th-sortable-arrow-color); /* Updated */
             opacity: 1;
         }
 
         th.sortable.sort-desc::after {
-            border-top-color: #333;
+            border-top-color: var(--th-sortable-arrow-color); /* Updated */
             opacity: 1;
         }
 
@@ -478,14 +686,17 @@
         }
 
         tr.qualifier {
-            background-color: #d4edda !important;
+            background-color: var(--qualifier-bg) !important; /* Updated */
+        }
+        body.dark-mode tr.qualifier td {
+            color: #e1e8ef; 
         }
 
         .player-card {
             background-color: var(--card-bg);
             padding: 25px;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 8px var(--box-shadow); /* Updated */
             margin-bottom: 20px;
             border: 1px solid var(--border-color);
         }
@@ -508,7 +719,7 @@
         .player-card h2 {
             margin-top: 0;
             margin-bottom: 15px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--border-color); /* Updated */
             padding-bottom: 10px;
             font-size: 1.3em;
             font-weight: 600;
@@ -546,7 +757,7 @@
             background-color: var(--card-bg);
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 8px var(--box-shadow); /* Updated */
             margin: 30px auto;
             max-width: 900px;
             border: 1px solid var(--border-color);
@@ -573,14 +784,17 @@
             border-left-color: var(--danger-color);
             color: var(--danger-color);
         }
+        body.dark-mode .error-message {
+            color: var(--danger-color-dark);
+        }
 
         .details-wrapper {
             margin-top: 30px;
             margin-bottom: 20px;
-            border: 1px solid #aaa;
+            border: 1px solid var(--details-border); /* Updated */
             border-radius: 5px;
-            background-color: #fff;
-            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.07);
+            background-color: var(--card-bg); /* Updated */
+            box-shadow: 0 3px 5px var(--box-shadow); /* Updated */
         }
 
         details summary {
@@ -589,7 +803,7 @@
             font-size: 1.1em;
             padding: 10px 15px;
             background-color: var(--header-bg);
-            border-bottom: 1px solid #aaa;
+            border-bottom: 1px solid var(--details-border); /* Updated */
             border-top-left-radius: 5px;
             border-top-right-radius: 5px;
             list-style: none;
@@ -614,18 +828,21 @@
 
         details summary:focus {
             outline: none;
-            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25); /* Needs theming */
+        }
+        body.dark-mode details summary:focus {
+             box-shadow: 0 0 0 2px rgba(var(--primary-color-dark-rgb, 13, 110, 253), 0.35);
         }
 
         details .details-content {
             padding: 20px;
-            border-top: 1px solid #eee;
+            border-top: 1px solid var(--details-content-border); /* Updated */
         }
 
         details .details-content h3 {
             margin-top: 1.5em;
             margin-bottom: 0.8em;
-            border-bottom: 1px dotted #ccc;
+            border-bottom: 1px dotted var(--border-color); /* Updated */
             padding-bottom: 4px;
             font-size: 1.1em;
         }
@@ -638,21 +855,21 @@
             border: 1px solid var(--border-color);
             padding: 15px;
             margin-bottom: 25px;
-            background-color: #fdfdfd;
+            background-color: var(--carousel-bg); /* Updated */
             border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 4px var(--box-shadow); /* Updated */
         }
 
         .carousel-header {
             text-align: center;
             margin-bottom: 10px;
             padding-bottom: 5px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--border-color); /* Updated */
         }
 
         .carousel-header h4 {
             margin: 0;
-            color: #555;
+            color: var(--carousel-header-text); /* Updated */
             font-size: 1.1em;
             border-bottom: none;
         }
@@ -671,14 +888,14 @@
             margin-top: 0;
             margin-bottom: 10px;
             font-size: 1.15em;
-            color: #333;
+            color: var(--carousel-slide-text); /* Updated */
         }
 
         .carousel-nav {
             text-align: center;
             margin-top: 15px;
             padding-top: 10px;
-            border-top: 1px solid #eee;
+            border-top: 1px solid var(--border-color); /* Updated */
         }
 
         .carousel-nav button {
@@ -692,13 +909,16 @@
             font-size: 0.95em;
             transition: background-color 0.2s ease;
         }
+        body.dark-mode .carousel-nav button {
+             color: #fff;
+        }
 
         .carousel-nav button:hover {
             background-color: var(--primary-hover);
         }
 
         .carousel-nav button:disabled {
-            background-color: #ccc;
+            background-color: var(--carousel-nav-disabled-bg); /* Updated */
             cursor: not-allowed;
             opacity: 0.7;
         }
@@ -715,11 +935,11 @@
         }
 
         .group-overview-item {
-            border: 1px solid #e0e0e0;
+            border: 1px solid var(--group-overview-item-border); /* Updated */
             padding: 10px 15px;
             border-radius: 5px;
-            background-color: #fff;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            background-color: var(--group-overview-item-bg); /* Updated */
+            box-shadow: 0 1px 3px var(--box-shadow); /* Updated */
         }
 
         .group-overview-item h4 {
@@ -727,9 +947,9 @@
             margin-bottom: 10px;
             text-align: center;
             font-size: 1.1em;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--border-color); /* Updated */
             padding-bottom: 5px;
-            color: #333;
+            color: var(--text-color); /* Updated */
         }
 
         .group-teams-table {
@@ -745,15 +965,15 @@
             font-weight: 600;
             text-align: left;
             padding: 6px 8px;
-            color: #444;
+            color: var(--group-teams-table-header-text); /* Updated */
             border: none;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--border-color); /* Updated */
         }
 
         .group-teams-table td {
             padding: 6px 8px;
             border: none;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid var(--group-teams-table-row-border); /* Updated */
             text-align: left;
         }
 
@@ -786,8 +1006,12 @@
 
         .sticky-top {
             position: sticky;
-            top: 0;
+            top: 0; 
             z-index: 100;
+            background-color: var(--header-bg); /* Ensure header is visible */
+        }
+        body.dark-mode .sticky-top {
+             background-color: var(--header-bg-dark);
         }
 
         hr {
@@ -829,17 +1053,22 @@
 
         @media (max-width: 768px) {
             body {
-                padding-top: 60px;
+                /* padding-top: 60px; */ /* Adjusted by nav-bar height */
             }
 
             .nav-bar {
                 padding: 5px 15px;
                 flex-wrap: wrap;
             }
-
+            
             .nav-toggle {
                 display: block;
                 flex-shrink: 0;
+                margin-left: 10px;
+                order: 2; /* After title */
+            }
+            #darkModeToggle {
+                order: 3; /* After nav-toggle */
                 margin-left: 10px;
             }
 
@@ -848,15 +1077,15 @@
                 flex-direction: column;
                 width: 100%;
                 align-items: flex-start;
-                background-color: white;
+                background-color: var(--nav-bar-bg); /* Updated */
                 padding-top: 10px;
                 padding-bottom: 10px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                box-shadow: 0 4px 6px var(--box-shadow); /* Updated */
                 position: absolute;
                 top: 100%;
                 left: 0;
                 right: 0;
-                order: 3;
+                order: 4; /* Below all other nav items */
             }
 
             .nav-links.active {
@@ -880,12 +1109,20 @@
             .nav-links a.active {
                 background-color: var(--light-bg);
                 color: var(--primary-hover);
-                border-bottom-color: var(--border-color);
+                border-bottom-color: var(--border-color); /* Or primary-hover */
+            }
+            body.dark-mode .nav-links a:hover, body.dark-mode .nav-links a.active {
+                 background-color: var(--light-bg-dark);
+                 color: var(--primary-hover-dark);
+                 border-bottom-color: var(--border-color-dark);
             }
 
             .nav-links a.active {
                 font-weight: 600;
                 border-bottom-color: var(--primary-hover);
+            }
+             body.dark-mode .nav-links a.active {
+                border-bottom-color: var(--primary-hover-dark);
             }
 
             .nav-title {
@@ -959,7 +1196,7 @@
         <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
             &#9776; 
         </button>
-        <div class="nav-links" id="navLinks"> 
+        <div class="nav-links" id="navLinks">
             <a href="{{ url_for('index') }}" class="{{ 'active' if active_page == 'index' }}">Hlavní stránka</a>
             <a href="{{ url_for('simulation_results') }}" class="{{ 'active' if active_page == 'simulation' }}">Výsledky
                 Simulace</a>
@@ -972,6 +1209,7 @@
             <a href="{{ url_for('correlation_analysis') }}"
                 class="{{ 'active' if active_page == 'correlation' }}">Korelační Analýza</a>
         </div>
+        <button id="darkModeToggle" aria-label="Toggle dark mode">🌙</button>
     </nav>
 
     <div class="container">
@@ -1338,6 +1576,100 @@
             }, false);
         }
             });
+    </script>
+    <script>
+        const toggleButton = document.getElementById('darkModeToggle');
+        const body = document.body;
+
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                body.classList.add('dark-mode');
+                toggleButton.textContent = '☀️'; 
+                toggleButton.setAttribute('aria-label', 'Switch to Light Mode');
+                if (typeof Plotly !== 'undefined') {
+                    document.querySelectorAll('.chart-div, .chart, #radarChartContainer, #winProbChart, #eloCompareChart, #eloEvolutionChart').forEach(chartElement => {
+                        if (chartElement.layout) { 
+                            Plotly.relayout(chartElement, {
+                                'plot_bgcolor': 'var(--card-bg-dark)',
+                                'paper_bgcolor': 'var(--card-bg-dark)',
+                                'font.color': 'var(--text-color-dark)',
+                                'xaxis.color': 'var(--text-muted-dark)',
+                                'yaxis.color': 'var(--text-muted-dark)',
+                                'xaxis.gridcolor': 'var(--border-color-dark)',
+                                'yaxis.gridcolor': 'var(--border-color-dark)',
+                                'legend.bgcolor': 'var(--card-bg-dark)',
+                                'legend.bordercolor': 'var(--border-color-dark)',
+                                'polar.bgcolor': 'var(--card-bg-dark)',
+                                'polar.angularaxis.gridcolor': 'var(--border-color-dark)',
+                                'polar.radialaxis.gridcolor': 'var(--border-color-dark)',
+                                'polar.angularaxis.linecolor': 'var(--border-color-dark)',
+                                'polar.radialaxis.linecolor': 'var(--border-color-dark)',
+                                'polar.angularaxis.tickcolor': 'var(--text-muted-dark)',
+                                'polar.radialaxis.tickcolor': 'var(--text-muted-dark)',
+                            });
+                        }
+                    });
+                }
+            } else {
+                body.classList.remove('dark-mode');
+                toggleButton.textContent = '🌙'; 
+                toggleButton.setAttribute('aria-label', 'Switch to Dark Mode');
+                if (typeof Plotly !== 'undefined') {
+                    document.querySelectorAll('.chart-div, .chart, #radarChartContainer, #winProbChart, #eloCompareChart, #eloEvolutionChart').forEach(chartElement => {
+                        if (chartElement.layout) { 
+                            Plotly.relayout(chartElement, {
+                                'plot_bgcolor': 'var(--card-bg-light)',
+                                'paper_bgcolor': 'var(--card-bg-light)',
+                                'font.color': 'var(--text-color-light)',
+                                'xaxis.color': 'var(--text-muted-light)',
+                                'yaxis.color': 'var(--text-muted-light)',
+                                'xaxis.gridcolor': 'var(--border-color-light)',
+                                'yaxis.gridcolor': 'var(--border-color-light)',
+                                'legend.bgcolor': 'var(--card-bg-light)',
+                                'legend.bordercolor': 'var(--border-color-light)',
+                                'polar.bgcolor': 'var(--card-bg-light)',
+                                'polar.angularaxis.gridcolor': 'var(--border-color-light)',
+                                'polar.radialaxis.gridcolor': 'var(--border-color-light)',
+                                'polar.angularaxis.linecolor': 'var(--border-color-light)',
+                                'polar.radialaxis.linecolor': 'var(--border-color-light)',
+                                'polar.angularaxis.tickcolor': 'var(--text-muted-light)',
+                                'polar.radialaxis.tickcolor': 'var(--text-muted-light)',
+                            });
+                        }
+                    });
+                }
+            }
+        }
+
+        let savedTheme = localStorage.getItem('theme');
+        if (!savedTheme) {
+            savedTheme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        applyTheme(savedTheme);
+
+        toggleButton.addEventListener('click', () => {
+            const currentTheme = body.classList.contains('dark-mode') ? 'dark' : 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            applyTheme(newTheme);
+            localStorage.setItem('theme', newTheme);
+            localStorage.setItem('theme_manual_override', 'true');
+        });
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (!localStorage.getItem('theme_manual_override')) {
+                 const newColorScheme = event.matches ? "dark" : "light";
+                 applyTheme(newColorScheme);
+                 localStorage.setItem('theme', newColorScheme);
+            }
+        });
+        
+        setTimeout(() => {
+            if (body.classList.contains('dark-mode')) {
+                 applyTheme('dark'); 
+            } else {
+                 applyTheme('light');
+            }
+        }, 500);
     </script>
 </body>
 

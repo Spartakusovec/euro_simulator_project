@@ -10,24 +10,192 @@
 
     <style>
         :root {
-            --primary-color: #007bff;
-            --primary-hover: #0056b3;
-            --secondary-color: #6c757d;
-            --secondary-hover: #5a6268;
-            --light-bg: #f8f9fa;
-            --border-color: #dee2e6;
-            --text-color: #343a40;
-            --text-muted: #6c757d;
-            --card-bg: #ffffff;
-            --header-bg: #e9ecef;
-            --success-color: #28a745;
-            --danger-color: #dc3545;
-            --stat-better: #28a745;
-            --stat-worse: #dc3545;
-            --stat-max: #17a2b8;
-            --stat-min: #ffc107;
-            --link-color: #007bff;
-            --link-hover: #0056b3;
+            /* Light Theme Variables */
+            --primary-color-light: #007bff;
+            --primary-hover-light: #0056b3;
+            --secondary-color-light: #6c757d;
+            --secondary-hover-light: #5a6268;
+            --light-bg-light: #f8f9fa; /* Used for forms, odd table rows */
+            --body-bg-light: #f4f4f4; /* Main page background */
+            --border-color-light: #dee2e6;
+            --text-color-light: #343a40;
+            --text-muted-light: #6c757d;
+            --card-bg-light: #ffffff;
+            --header-bg-light: #e9ecef;
+            --success-color-light: #28a745;
+            --danger-color-light: #dc3545;
+            --danger-hover-light: #c82333;
+            --stat-better-light: #28a745;
+            --stat-worse-light: #dc3545;
+            --stat-max-light: #17a2b8; /* Typically info */
+            --stat-min-light: #ffc107; /* Typically warning */
+            --link-color-light: #007bff;
+            --link-hover-light: #0056b3;
+            --nav-bar-bg-light: #ffffff;
+            --select-arrow-color-light: '%236c757d'; /* #6c757d */
+            --table-hover-bg-light: #f1f1f1;
+            --details-border-light: #aaa;
+            --details-content-border-light: #eee;
+            --carousel-bg-light: #fdfdfd;
+            --carousel-header-text-light: #555;
+            --carousel-slide-text-light: #333;
+            --carousel-nav-disabled-bg-light: #ccc;
+            --group-overview-item-bg-light: #fff;
+            --group-overview-item-border-light: #e0e0e0;
+            --group-teams-table-header-text-light: #444;
+            --group-teams-table-row-border-light: #f0f0f0;
+            --th-sortable-hover-bg-light: #dde2e6;
+            --th-sortable-arrow-color-light: #333;
+            --qualifier-bg-light: #d4edda;
+            --checkbox-hover-bg-light: #e9ecef;
+            --checkbox-hover-border-light: #adb5bd;
+            --button-disabled-bg-light: #ccc;
+            --button-disabled-border-light: #bbb;
+            --button-disabled-text-light: #888;
+            --category-label-indeterminate-bg-light: #daf0FF;
+            --attribute-group-border-light: #ddd;
+            --box-shadow-light: rgba(0, 0, 0, 0.05);
+
+
+            /* Dark Theme Variables */
+            --primary-color-dark: #0d6efd;
+            --primary-hover-dark: #3385fd;
+            --secondary-color-dark: #5c636a;
+            --secondary-hover-dark: #494f54;
+            --light-bg-dark: #22272e; 
+            --body-bg-dark: #1c2128;  
+            --border-color-dark: #444c56;
+            --text-color-dark: #adbac7;
+            --text-muted-dark: #768390;
+            --card-bg-dark: #2d333b;
+            --header-bg-dark: #373e47;
+            --success-color-dark: #34c356; 
+            --danger-color-dark: #f85149;  
+            --danger-hover-dark: #fa3d35;
+            --stat-better-dark: #34c356;
+            --stat-worse-dark: #f85149;
+            --stat-max-dark: #2cbce0; 
+            --stat-min-dark: #ffca2c; 
+            --link-color-dark: #2c8cff;
+            --link-hover-dark: #57a3ff;
+            --nav-bar-bg-dark: #2d333b;
+            --select-arrow-color-dark: '%23adbac7'; 
+            --table-hover-bg-dark: #373e47;
+            --details-border-dark: #555c66;
+            --details-content-border-dark: #444c56;
+            --carousel-bg-dark: #282e36;
+            --carousel-header-text-dark: #aab5c1;
+            --carousel-slide-text-dark: #adbac7;
+            --carousel-nav-disabled-bg-dark: #444c56;
+            --group-overview-item-bg-dark: #2d333b;
+            --group-overview-item-border-dark: #444c56;
+            --group-teams-table-header-text-dark: #adbac7;
+            --group-teams-table-row-border-dark: #373e47;
+            --th-sortable-hover-bg-dark: #404853;
+            --th-sortable-arrow-color-dark: #adbac7;
+            --qualifier-bg-dark: #2a5a3a !important; 
+            --checkbox-hover-bg-dark: #373e47;
+            --checkbox-hover-border-dark: #5a6268;
+            --button-disabled-bg-dark: #444c56;
+            --button-disabled-border-dark: #555c66;
+            --button-disabled-text-dark: #768390;
+            --category-label-indeterminate-bg-dark: #2a4a6e; /* Darker blue for indeterminate */
+            --attribute-group-border-dark: var(--border-color-dark);
+            --box-shadow-dark: rgba(255, 255, 255, 0.05);
+
+
+            /* Default to Light Theme */
+            --primary-color: var(--primary-color-light);
+            --primary-hover: var(--primary-hover-light);
+            --secondary-color: var(--secondary-color-light);
+            --secondary-hover: var(--secondary-hover-light);
+            --light-bg: var(--light-bg-light);
+            --body-bg: var(--body-bg-light);
+            --border-color: var(--border-color-light);
+            --text-color: var(--text-color-light);
+            --text-muted: var(--text-muted-light);
+            --card-bg: var(--card-bg-light);
+            --header-bg: var(--header-bg-light);
+            --success-color: var(--success-color-light);
+            --danger-color: var(--danger-color-light);
+            --danger-hover: var(--danger-hover-light);
+            --stat-better: var(--stat-better-light);
+            --stat-worse: var(--stat-worse-light);
+            --stat-max: var(--stat-max-light);
+            --stat-min: var(--stat-min-light);
+            --link-color: var(--link-color-light);
+            --link-hover: var(--link-hover-light);
+            --nav-bar-bg: var(--nav-bar-bg-light);
+            --select-arrow-color: var(--select-arrow-color-light);
+            --table-hover-bg: var(--table-hover-bg-light);
+            --details-border: var(--details-border-light);
+            --details-content-border: var(--details-content-border-light);
+            --carousel-bg: var(--carousel-bg-light);
+            --carousel-header-text: var(--carousel-header-text-light);
+            --carousel-slide-text: var(--carousel-slide-text-light);
+            --carousel-nav-disabled-bg: var(--carousel-nav-disabled-bg-light);
+            --group-overview-item-bg: var(--group-overview-item-bg-light);
+            --group-overview-item-border: var(--group-overview-item-border-light);
+            --group-teams-table-header-text: var(--group-teams-table-header-text-light);
+            --group-teams-table-row-border: var(--group-teams-table-row-border-light);
+            --th-sortable-hover-bg: var(--th-sortable-hover-bg-light);
+            --th-sortable-arrow-color: var(--th-sortable-arrow-color-light);
+            --qualifier-bg: var(--qualifier-bg-light);
+            --checkbox-hover-bg: var(--checkbox-hover-bg-light);
+            --checkbox-hover-border: var(--checkbox-hover-border-light);
+            --button-disabled-bg: var(--button-disabled-bg-light);
+            --button-disabled-border: var(--button-disabled-border-light);
+            --button-disabled-text: var(--button-disabled-text-light);
+            --category-label-indeterminate-bg: var(--category-label-indeterminate-bg-light);
+            --attribute-group-border: var(--attribute-group-border-light);
+            --box-shadow: var(--box-shadow-light);
+        }
+
+        body.dark-mode {
+            --primary-color: var(--primary-color-dark);
+            --primary-hover: var(--primary-hover-dark);
+            --secondary-color: var(--secondary-color-dark);
+            --secondary-hover: var(--secondary-hover-dark);
+            --light-bg: var(--light-bg-dark);
+            --body-bg: var(--body-bg-dark);
+            --border-color: var(--border-color-dark);
+            --text-color: var(--text-color-dark);
+            --text-muted: var(--text-muted-dark);
+            --card-bg: var(--card-bg-dark);
+            --header-bg: var(--header-bg-dark);
+            --success-color: var(--success-color-dark);
+            --danger-color: var(--danger-color-dark);
+            --danger-hover: var(--danger-hover-dark);
+            --stat-better: var(--stat-better-dark);
+            --stat-worse: var(--stat-worse-dark);
+            --stat-max: var(--stat-max-dark);
+            --stat-min: var(--stat-min-dark);
+            --link-color: var(--link-color-dark);
+            --link-hover: var(--link-hover-dark);
+            --nav-bar-bg: var(--nav-bar-bg-dark);
+            --select-arrow-color: var(--select-arrow-color-dark);
+            --table-hover-bg: var(--table-hover-bg-dark);
+            --details-border: var(--details-border-dark);
+            --details-content-border: var(--details-content-border-dark);
+            --carousel-bg: var(--carousel-bg-dark);
+            --carousel-header-text: var(--carousel-header-text-dark);
+            --carousel-slide-text: var(--carousel-slide-text-dark);
+            --carousel-nav-disabled-bg: var(--carousel-nav-disabled-bg-dark);
+            --group-overview-item-bg: var(--group-overview-item-bg-dark);
+            --group-overview-item-border: var(--group-overview-item-border-dark);
+            --group-teams-table-header-text: var(--group-teams-table-header-text-dark);
+            --group-teams-table-row-border: var(--group-teams-table-row-border-dark);
+            --th-sortable-hover-bg: var(--th-sortable-hover-bg-dark);
+            --th-sortable-arrow-color: var(--th-sortable-arrow-color-dark);
+            --qualifier-bg: var(--qualifier-bg-dark);
+            --checkbox-hover-bg: var(--checkbox-hover-bg-dark);
+            --checkbox-hover-border: var(--checkbox-hover-border-dark);
+            --button-disabled-bg: var(--button-disabled-bg-dark);
+            --button-disabled-border: var(--button-disabled-border-dark);
+            --button-disabled-text: var(--button-disabled-text-dark);
+            --category-label-indeterminate-bg: var(--category-label-indeterminate-bg-dark);
+            --attribute-group-border: var(--attribute-group-border-dark);
+            --box-shadow: var(--box-shadow-dark);
         }
 
         body {
@@ -35,7 +203,7 @@
             margin: 0;
             padding: 20px;
             line-height: 1.6;
-            background-color: #f4f4f4;
+            background-color: var(--body-bg);
             color: var(--text-color);
             position: relative;
             padding-top: 80px;
@@ -47,7 +215,7 @@
             padding: 25px;
             background-color: var(--card-bg);
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 8px var(--box-shadow);
         }
 
         h1,
@@ -102,8 +270,8 @@
             top: 0;
             left: 0;
             right: 0;
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: var(--nav-bar-bg);
+            box-shadow: 0 2px 4px var(--box-shadow);
             z-index: 1000;
             padding: 10px 25px;
             display: flex;
@@ -118,6 +286,21 @@
             font-size: 1.2em;
             color: var(--text-color);
             flex-grow: 1;
+        }
+        
+        #darkModeToggle { /* Style for the new button */
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-left: 15px; /* Space from nav links or toggle */
+            order: 3; /* Ensure it comes after nav-links if they wrap */
+        }
+        body.dark-mode #darkModeToggle {
+            background-color: var(--primary-color);
         }
 
         .nav-toggle {
@@ -177,6 +360,14 @@
             transition: all 0.2s ease;
             white-space: nowrap;
         }
+        button:disabled,
+        a.button-link:disabled {
+            background-color: var(--button-disabled-bg) !important;
+            border-color: var(--button-disabled-border) !important;
+            color: var(--button-disabled-text) !important;
+            cursor: not-allowed !important;
+            opacity: 0.65 !important;
+        }
 
         .btn-primary,
         button.main-submit {
@@ -184,10 +375,13 @@
             border-color: var(--primary-color);
             color: white;
         }
+        body.dark-mode .btn-primary, body.dark-mode button.main-submit {
+            color: #fff;
+        }
 
         .btn-primary:hover,
         button.main-submit:hover {
-            background-color: var (--primary-hover);
+            background-color: var(--primary-hover);
             border-color: var(--primary-hover);
             color: white;
             text-decoration: none;
@@ -199,6 +393,9 @@
             background-color: var(--secondary-color);
             border-color: var(--secondary-color);
             color: white;
+        }
+        body.dark-mode .btn-secondary, body.dark-mode a.reset-button, body.dark-mode a.back-button {
+            color: #fff;
         }
 
         .btn-secondary:hover,
@@ -219,7 +416,7 @@
             background-color: var(--light-bg);
             padding: 25px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 4px var(--box-shadow);
             margin-bottom: 30px;
             border: 1px solid var(--border-color);
         }
@@ -283,15 +480,21 @@
 
         select {
             appearance: none;
-            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236c757d%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.6-3.6%205.4-7.8%205.4-12.8%200-5-1.8-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22' + var(--select-arrow-color) + '%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.6-3.6%205.4-7.8%205.4-12.8%200-5-1.8-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
             background-repeat: no-repeat;
             background-position: right 12px center;
             background-size: 10px 10px;
             padding-right: 35px;
         }
+        body:not(.dark-mode) select {
+             background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236c757d%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.6-3.6%205.4-7.8%205.4-12.8%200-5-1.8-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
+        }
+        body.dark-mode select {
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23adbac7%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.6-3.6%205.4-7.8%205.4-12.8%200-5-1.8-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
+        }
 
         select:disabled {
-            background-color: #e9ecef;
+            background-color: var(--header-bg);
             cursor: not-allowed;
             opacity: 0.7;
         }
@@ -315,7 +518,7 @@
             margin-bottom: 10px;
         }
 
-        .checkbox-group {
+        .checkbox-group { /* For specific attribute/position checkboxes */
             display: flex;
             flex-wrap: wrap;
             gap: 8px 12px;
@@ -326,12 +529,12 @@
             display: none;
         }
 
-        .checkbox-group label,
+        .checkbox-group label, /* For specific attribute/position checkboxes */
         .radio-group label.radio-label {
             display: inline-block;
             padding: 6px 14px;
             border: 1px solid var(--border-color);
-            border-radius: 18px;
+            border-radius: 18px; /* Pill shape for checkboxes */
             background-color: var(--card-bg);
             color: var(--text-muted);
             cursor: pointer;
@@ -344,23 +547,28 @@
             text-align: center;
         }
 
-        .radio-group label.radio-label {
+        .radio-group label.radio-label { /* Radio buttons are not pills */
             border-radius: 6px;
             padding: 8px 12px;
             flex-grow: 1;
         }
 
-        .radio-group input[type="radio"]:checked+label.radio-label {
-            background-color: var(--primary-color);
-            color: white;
-            border-color: var(--primary-hover);
-        }
-
-
+        .radio-group input[type="radio"]:checked+label.radio-label,
         .checkbox-group input[type="checkbox"]:checked+label {
             background-color: var(--primary-color);
             color: white;
             border-color: var(--primary-hover);
+        }
+        body.dark-mode .radio-group input[type="radio"]:checked+label.radio-label,
+        body.dark-mode .checkbox-group input[type="checkbox"]:checked+label {
+            color: #fff;
+        }
+
+        .checkbox-group input[type="checkbox"]:not(:checked)+label:hover,
+        .radio-group input[type="radio"]:not(:checked)+label.radio-label:hover {
+            background-color: var(--checkbox-hover-bg);
+            border-color: var(--checkbox-hover-border);
+            color: var(--text-color);
         }
 
         .selection-buttons {
@@ -375,7 +583,7 @@
             width: 100%;
             margin: 20px auto 30px auto;
             background-color: var(--card-bg);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.07);
+            box-shadow: 0 2px 5px var(--box-shadow);
             border-radius: 8px;
             overflow: hidden;
             border: 1px solid var(--border-color);
@@ -408,7 +616,7 @@
         }
 
         tbody tr:hover {
-            background-color: #f1f1f1;
+            background-color: var(--table-hover-bg);
         }
 
         td.number,
@@ -427,7 +635,7 @@
         }
 
         th.sortable:hover {
-            background-color: #dde2e6;
+            background-color: var(--th-sortable-hover-bg);
         }
 
         th.sortable::after {
@@ -441,12 +649,12 @@
         }
 
         th.sortable.sort-asc::after {
-            border-bottom-color: #333;
+            border-bottom-color: var(--th-sortable-arrow-color);
             opacity: 1;
         }
 
         th.sortable.sort-desc::after {
-            border-top-color: #333;
+            border-top-color: var(--th-sortable-arrow-color);
             opacity: 1;
         }
 
@@ -487,7 +695,7 @@
             background-color: var(--card-bg);
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 8px var(--box-shadow);
             margin: 30px auto;
             max-width: 900px;
             border: 1px solid var(--border-color);
@@ -518,13 +726,16 @@
             border-left-color: var(--danger-color);
             color: var(--danger-color);
         }
+         body.dark-mode .error-message {
+            color: var(--danger-color-dark);
+        }
 
         .attribute-group {
-            border: 1px solid #ddd;
+            border: 1px solid var(--attribute-group-border); /* Updated */
             border-radius: 5px;
             padding: 15px;
             margin-bottom: 15px;
-            background-color: white;
+            background-color: var(--card-bg); /* Updated */
         }
 
         .attribute-group-title {
@@ -539,14 +750,14 @@
             padding-right: 10px;
             border: 1px solid var(--border-color);
             border-radius: 6px;
-            background-color: white;
+            background-color: var(--card-bg); /* Updated */
         }
 
         .position-category-group {
             border: 1px solid var(--border-color);
             border-radius: 5px;
             margin-bottom: 10px;
-            background-color: white;
+            background-color: var(--card-bg); /* Updated */
             overflow: hidden;
         }
 
@@ -576,7 +787,7 @@
             display: none;
         }
 
-        label.category-label {
+        label.category-label { /* General category label for positions and attributes */
             display: inline-block;
             padding: 8px 16px;
             border: 1px solid var(--border-color);
@@ -594,40 +805,27 @@
 
         .position-category-checkbox:not(:checked)+label.category-label:hover,
         .attribute-category-checkbox:not(:checked)+label.category-label:hover {
-            background-color: #dde2e6;
-            border-color: #adb5bd;
+            background-color: var(--checkbox-hover-bg) !important; /* Use variable, !important for specificity */
+            border-color: var(--checkbox-hover-border) !important; /* Use variable, !important for specificity */
         }
 
-        label.category-label.category-label-checked {
-            background-color: var(--primary-color);
-            color: white;
-            border-color: var(--primary-hover);
-        }
-
-        label.category-label.category-label-indeterminate {
-            background-color: #daf0FF;
-            color: var(--primary-hover);
-            border-color: var(--primary-color);
-        }
-
-        label.category-label.category-label-checked {
+        label.category-label.category-label-checked { /* JS controlled, for checked state */
             background-color: var(--primary-color) !important;
             color: white !important;
             border-color: var(--primary-hover) !important;
         }
+        body.dark-mode label.category-label.category-label-checked {
+            color: #fff !important;
+        }
 
-        label.category-label.category-label-indeterminate {
-            background-color: #daf0FF !important;
-            color: var (--primary-hover) !important;
+        label.category-label.category-label-indeterminate { /* JS controlled, for indeterminate state */
+            background-color: var(--category-label-indeterminate-bg) !important; /* Updated */
+            color: var(--primary-hover) !important; /* This might need adjustment for dark mode */
             border-color: var(--primary-color) !important;
         }
-
-        .position-category-checkbox:not(:checked)+label.category-label:hover,
-        .attribute-category-checkbox:not(:checked)+label.category-label:hover {
-            background-color: #dde2e6 !important;
-            border-color: #adb5bd !important;
+        body.dark-mode label.category-label.category-label-indeterminate {
+             color: var(--primary-hover-dark) !important;
         }
-
 
         .submit-container {
             text-align: center;
@@ -638,7 +836,7 @@
 
         @media (max-width: 768px) {
             body {
-                padding-top: 60px;
+                /* padding-top: 60px; */ /* Adjusted by nav-bar height */
             }
 
             .nav-bar {
@@ -654,6 +852,11 @@
                 display: block;
                 flex-shrink: 0;
                 margin-left: 10px;
+                order: 2;
+            }
+            #darkModeToggle {
+                order: 3;
+                margin-left: 10px;
             }
 
             .nav-links {
@@ -661,15 +864,15 @@
                 flex-direction: column;
                 width: 100%;
                 align-items: flex-start;
-                background-color: white;
+                background-color: var(--nav-bar-bg);
                 padding-top: 10px;
                 padding-bottom: 10px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                box-shadow: 0 4px 6px var(--box-shadow);
                 position: absolute;
                 top: 100%;
                 left: 0;
                 right: 0;
-                order: 3;
+                order: 4;
             }
 
             .nav-links.active {
@@ -695,11 +898,20 @@
                 color: var(--primary-hover);
                 border-bottom-color: var(--border-color);
             }
+             body.dark-mode .nav-links a:hover, body.dark-mode .nav-links a.active {
+                 background-color: var(--light-bg-dark);
+                 color: var(--primary-hover-dark);
+                 border-bottom-color: var(--border-color-dark);
+            }
 
             .nav-links a.active {
                 font-weight: 600;
                 border-bottom-color: var(--primary-hover);
             }
+            body.dark-mode .nav-links a.active {
+                border-bottom-color: var(--primary-hover-dark);
+            }
+
 
             .container {
                 padding: 15px;
@@ -780,7 +992,7 @@
             position: sticky;
             left: 0;
             z-index: 2;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+            box-shadow: 2px 0 5px var(--box-shadow);
         }
 
         #players-table thead th {
@@ -809,33 +1021,30 @@
         }
 
         #players-table tbody tr:hover td {
-            background-color: #f1f1f1;
+            background-color: var(--table-hover-bg); /* Updated */
         }
 
+        /* Ensure non-first-child cells also get hover effect */
         #players-table tbody td:not(:first-child) {
-            background-color: var(--card-bg);
+             background-color: var(--card-bg); /* Default for non-sticky cells */
         }
-
         #players-table tbody tr:nth-child(odd) td:not(:first-child) {
             background-color: var(--light-bg);
         }
-
         #players-table tbody tr:hover td:not(:first-child) {
-            background-color: #f1f1f1;
+            background-color: var(--table-hover-bg);
         }
 
+        /* Ensure first-child (sticky) cells also get hover effect */
         #players-table tbody td:first-child {
-            background-color: var(--card-bg);
+            background-color: var(--card-bg); /* Default for sticky cells */
         }
-
         #players-table tbody tr:nth-child(odd) td:first-child {
             background-color: var(--light-bg);
         }
-
-        #players-table tbody tr:hover td:first-child {
-            background-color: #f1f1f1;
+         #players-table tbody tr:hover td:first-child {
+            background-color: var(--table-hover-bg);
         }
-
 
         #players-table thead th {
             position: sticky;
@@ -847,7 +1056,6 @@
         #players-table thead th:first-child {
             z-index: 4;
         }
-
 
         #correlation-chart {
             width: 100%;
@@ -866,7 +1074,8 @@
             }
         }
 
-        @media (max-width: 768px) {
+        /* Redundant media query, consolidate if needed */
+        /* @media (max-width: 768px) {
             #correlation-chart {
                 height: 450px;
                 min-height: 350px;
@@ -876,9 +1085,10 @@
                 padding: 5px;
                 margin: 10px auto;
             }
-        }
+        } */
 
-        @media (max-width: 768px) {
+        /* Redundant media query, consolidate if needed */
+        /* @media (max-width: 768px) {
             .nav-title {
                 flex-grow: 0;
                 margin-right: auto;
@@ -888,7 +1098,7 @@
                 display: block;
                 margin-left: 10px;
             }
-        }
+        } */
     </style>
     <script>
     });
@@ -899,9 +1109,9 @@
     <nav class="nav-bar">
         <div class="nav-title">Euro Simulátor</div>
         <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
-            &#9776; 
+            &#9776; <!-- Hamburger icon -->
         </button>
-        <div class="nav-links" id="navLinks"> 
+        <div class="nav-links" id="navLinks">
             <a href="{{ url_for('index') }}" class="{{ 'active' if active_page == 'index' }}">Hlavní stránka</a>
             <a href="{{ url_for('simulation_results') }}" class="{{ 'active' if active_page == 'simulation' }}">Výsledky Simulace</a>
             <a href="{{ url_for('descriptive_analysis') }}" class="{{ 'active' if active_page == 'analysis' }}">Týmová Analýza</a>
@@ -909,6 +1119,7 @@
             <a href="{{ url_for('attribute_distributions') }}" class="{{ 'active' if active_page == 'distributions' }}">Distribuce Atributů</a>
             <a href="{{ url_for('correlation_analysis') }}" class="active">Korelační Analýza</a>
         </div>
+        <button id="darkModeToggle" aria-label="Toggle dark mode">🌙</button>
     </nav>
 
     <div class="container mt-4">
@@ -1109,19 +1320,19 @@
                                 <ul class="list-group" style="list-style-type: none; padding: 0;">
                                     <li style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color); background-color: var(--light-bg);">
                                         <span>1.0 Perfektní pozitivní korelace</span>
-                                        <span style="background-color: var(--danger-color); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8em;">Perfektní</span>
+                                        <span class="badge" style="background-color: var(--danger-color); color: white; font-size: 0.8em;">Perfektní</span>
                                     </li>
                                     <li style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color);">
                                         <span>0.7 - 0.9 Silná pozitivní korelace</span>
-                                        <span style="background-color: var(--danger-color); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8em;">Silná</span>
+                                        <span class="badge" style="background-color: var(--danger-color); color: white; font-size: 0.8em;">Silná</span>
                                     </li>
                                     <li style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color); background-color: var(--light-bg);">
                                         <span>0.4 - 0.6 Střední pozitivní korelace</span>
-                                        <span style="background-color: var(--stat-min); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8em;">Střední</span>
+                                        <span class="badge" style="background-color: var(--stat-min); color: white; font-size: 0.8em;">Střední</span>
                                     </li>
                                     <li style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color);">
                                         <span>0.1 - 0.3 Slabá pozitivní korelace</span>
-                                        <span style="background-color: var(--stat-max); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8em;">Slabá</span>
+                                        <span class="badge" style="background-color: var(--stat-max); color: white; font-size: 0.8em;">Slabá</span>
                                     </li>
                                 </ul>
                             </div>
@@ -1129,19 +1340,19 @@
                                 <ul class="list-group" style="list-style-type: none; padding: 0;">
                                     <li style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color); background-color: var(--light-bg);">
                                         <span>0 Žádná korelace</span>
-                                        <span style="background-color: var(--secondary-color); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8em;">Žádná</span>
+                                        <span class="badge" style="background-color: var(--secondary-color); color: white; font-size: 0.8em;">Žádná</span>
                                     </li>
                                     <li style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color);">
                                         <span>-0.1 - -0.3 Slabá negativní korelace</span>
-                                        <span style="background-color: var(--stat-max); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8em;">Slabá</span>
+                                        <span class="badge" style="background-color: var(--stat-max); color: white; font-size: 0.8em;">Slabá</span>
                                     </li>
                                     <li style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color); background-color: var(--light-bg);">
                                         <span>-0.4 - -0.6 Střední negativní korelace</span>
-                                        <span style="background-color: var(--stat-min); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8em;">Střední</span>
+                                        <span class="badge" style="background-color: var(--stat-min); color: white; font-size: 0.8em;">Střední</span>
                                     </li>
                                     <li style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color);">
                                         <span>-0.7 - -1.0 Silná negativní korelace</span>
-                                        <span style="background-color: var(--danger-color); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8em;">Silná</span>
+                                        <span class="badge" style="background-color: var(--danger-color); color: white; font-size: 0.8em;">Silná</span>
                                     </li>
                                 </ul>
                             </div>
